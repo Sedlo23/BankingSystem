@@ -1,6 +1,7 @@
 package Building;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
 /**
@@ -15,16 +16,22 @@ public class LocalBank extends GenericBank {
     private int size=60;
 
     public LocalBank(Point2D position, Color color) {
-        super(position, color);
+        super(position, color,"NONE");
+    }
+
+    public LocalBank(Point2D position, Color color,String name) {
+        super(position, color,name);
     }
 
     @Override
     public void draw(Graphics2D graphics2D)
     {
-
         graphics2D.setColor(this.getColor());
-        graphics2D.fillOval((int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()-(size/2)),(int)((size/2)),(int)((size/2)));
-        System.out.println("-");
+
+        graphics2D.fillOval((int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()-(size/2)),(int)((size)),(int)((size)));
+
+
+        //graphics2D.drawString(this.toString(),(int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()));
 
     }
 
@@ -42,7 +49,17 @@ public class LocalBank extends GenericBank {
         return super.getColor();
     }
 
+    @Override
+    public Shape getHitBox() {
+        return new Ellipse2D.Double((int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()-(size/2)),(int)((size)),(int)((size))).getBounds2D();
+    }
+
     public void setColor(Color color) {
         super.setColor(color);
+    }
+
+    @Override
+    public String toString() {
+        return this.getName()+" Dis: +"+getMinDistance();
     }
 }

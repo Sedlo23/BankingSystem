@@ -17,4 +17,7 @@ public interface IDrawAble {
     public Point2D getPosition();
 
     public Color getColor();
+
+    public Shape getHitBox();
+
 }

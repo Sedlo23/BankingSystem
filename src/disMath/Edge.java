@@ -1,6 +1,7 @@
 package disMath;
 
-class Edge {
+public class Edge {
+
 
     private Node start;
 
@@ -8,7 +9,6 @@ class Edge {
 
     private int weight;
 
-    private Object carriedObject;
 
     public Edge(Node start, Node end, int weight) {
         this.setStart(start);
@@ -40,13 +40,6 @@ class Edge {
         this.weight = weight;
     }
 
-    public Object getCarriedObject() {
-        return carriedObject;
-    }
-
-    public void setCarriedObject(Object carriedObject) {
-        this.carriedObject = carriedObject;
-    }
 
     @Override
     public String toString() {

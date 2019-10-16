@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Node implements Comparable{
 
-    private Object carriedObject;
+    private String name;
 
     private List<Edge> connections=new ArrayList<>();
 
@@ -14,8 +14,8 @@ public class Node implements Comparable{
 
     private Node prev;
 
-    public Node(Object carriedObject) {
-        this.carriedObject = carriedObject;
+    public Node(String name) {
+        this.name = name;
     }
 
     public void addEdge(Node node,int weight)
@@ -23,12 +23,12 @@ public class Node implements Comparable{
         this.getConnections().add(new Edge(this,node,weight));
     }
 
-    public Object getCarriedObject() {
-        return carriedObject;
+    public String getName() {
+        return name;
     }
 
-    public void setCarriedObject(String carriedObject) {
-        this.carriedObject = carriedObject;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Edge> getConnections() {
@@ -57,7 +57,7 @@ public class Node implements Comparable{
 
     @Override
     public String toString() {
-        return this.getCarriedObject().toString();
+        return this.getName();
     }
 
     @Override

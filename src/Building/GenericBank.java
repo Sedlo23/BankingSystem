@@ -1,5 +1,7 @@
 package Building;
 
+import disMath.Node;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 
@@ -10,13 +12,16 @@ import java.awt.geom.Point2D;
  * @version 1.0
  * @since 16.10.19
  */
-public abstract class GenericBank implements IDrawAble
+public abstract class GenericBank extends Node implements IDrawAble
 {
     private Point2D position;
 
     private Color color;
 
-    public GenericBank(Point2D position, Color color) {
+    private String name;
+
+    public GenericBank(Point2D position, Color color,String name) {
+        super(name);
         this.position = position;
         this.color = color;
     }

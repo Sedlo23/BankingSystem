@@ -1,6 +1,8 @@
 package UI;
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 /**
  * UI
@@ -29,5 +31,15 @@ public class UI {
         LeftPanel =a;
 
         a.populateGraph();
+
+        LeftPanel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                super.mouseMoved(e);
+                if (a.getMousePosition() != null)
+                    a.collisionDetection(e.getPoint());
+
+            }
+        });
     }
 }
