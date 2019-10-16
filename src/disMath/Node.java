@@ -57,7 +57,12 @@ public class Node implements Comparable{
 
     @Override
     public String toString() {
-        return this.getName();
+        return "{" +
+                "name='" + name + '\'' +
+                ", connections=" + connections.size() +
+                ", minDistance=" + minDistance +
+                ", prev=" + prev +
+                '}';
     }
 
     @Override

@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.PriorityQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * UI
@@ -122,7 +123,6 @@ public class JMap extends JPanel implements ActionListener {
 
             for (Node node:graph.getNodes())
             {
-
                 if (((GenericBank)node).getHitBox().intersects(y.getBounds2D()))
                     System.out.println(node.toString());
 
@@ -156,6 +156,7 @@ public class JMap extends JPanel implements ActionListener {
             for (Edge e : u.getConnections())
             {
                 Node v = e.getEnd();
+                ((Road)e).setColor(Color.YELLOW);
                 double weight = e.getWeight();
                 double distanceThroughU = u.getMinDistance() + weight;
                 if (distanceThroughU < v.getMinDistance()) {
@@ -163,8 +164,9 @@ public class JMap extends JPanel implements ActionListener {
                     v.setMinDistance( distanceThroughU) ;
                     v.setPrev(u);
                     vertexQueue.add(v);
+                    ((GenericBank)v).setColor(Color.BLUE);
+                    TimeUnit.SECONDS.sleep(delay);
 
-                    timer.wait(delay);
                 }
             }
         }

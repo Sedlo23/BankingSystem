@@ -60,6 +60,6 @@ public class LocalBank extends GenericBank {
 
     @Override
     public String toString() {
-        return this.getName()+" Dis: +"+getMinDistance();
+        return "LocalBank"+super.toString();
     }
 }
