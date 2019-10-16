@@ -20,4 +20,6 @@ public interface IDrawAble {
 
     public Shape getHitBox();
 
+    public void setDefaultColor();
+
 }

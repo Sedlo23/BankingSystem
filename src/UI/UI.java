@@ -4,10 +4,7 @@ import disMath.Graph;
 import disMath.Node;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.io.PrintStream;
 
 /**
@@ -33,13 +30,12 @@ public class UI {
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
+
                     graph.computePaths(graph.getNodes().get(0));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
             }
         });
+
     }
 
     public static void main(String[] args) {
@@ -52,12 +48,12 @@ public class UI {
 
     }
 
-    private void createUIComponents() {
+    private void createUIComponents() throws CloneNotSupportedException {
         JMap a= new JMap();
 
         LeftPanel =a;
 
-        a.populateGraph();
+        a.populateGraph(50,50);
 
         graph=a.getGraph();
 
@@ -67,6 +63,16 @@ public class UI {
                 super.mouseMoved(e);
                 if (a.getMousePosition() != null)
                     a.collisionDetection(e.getPoint());
+            }
+        });
+
+        LeftPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (a.getMousePosition() != null)
+                a.collisionDetectionNodeSelection(e.getPoint());
+
             }
         });
 

@@ -22,6 +22,7 @@ import java.awt.geom.Point2D;
  */
 public class JMap extends JPanel implements ActionListener {
 
+
     private int refreshTime=100;
 
     private Timer timer;
@@ -52,12 +53,10 @@ public class JMap extends JPanel implements ActionListener {
     }
 
 
-    @Deprecated
-    public void populateGraph()
-    {
+    public void populateGraph(int numberOfRows,int numberOfColumns) throws CloneNotSupportedException {
 
-        for (int i2=0;i2<80;i2++)
-         for (int i=0;i<80;i++)
+        for (int i2=0;i2<numberOfColumns;i2++)
+         for (int i=0;i<numberOfRows;i++)
                 this.graph.addNode(new LocalBank(new Point2D.Double(i*100+Math.random()*99,i2*100+Math.random()*99),Color.RED,i2+","+i));
 
         for (Node node1:this.graph.getNodes())
@@ -69,9 +68,44 @@ public class JMap extends JPanel implements ActionListener {
             }
 
 
+    }
+
+    public void highLightRoad(Node source) {
+
+
+
+        for (Node node:graph.getNodes())
+            for (Edge edge:node.getConnections())
+            {
+                ((Road)edge).setDefaultColor();
+                ((Road)edge).setDefaultStroke();
+
+            }
+        for (Edge edge:graph.getShortens(source))
+        {
+            ((Road)edge).setColor(Color.BLUE);
+            ((Road)edge).setStroke(30);
+
+        }
 
     }
 
+    public void highLightRoad(Node source,Node destination) {
+
+       graph.computePaths(destination);
+
+        for (Node node:graph.getNodes())
+        for (Edge edge:node.getConnections())
+            ((Road)edge).setDefaultColor();
+
+        for (Edge edge:graph.getShortens(source))
+        {
+            ((Road)edge).setColor(Color.BLUE);
+            ((Road)edge).setStroke(30);
+
+        }
+
+    }
 
     public Graph getGraph() {
         return graph;
@@ -99,10 +133,17 @@ public class JMap extends JPanel implements ActionListener {
 
         computeModelDimensions(graphics2D);
 
+
         for (Node node:graph.getNodes())
         {
             for (Edge edge:node.getConnections())
                 ((Road)edge).draw(graphics2D);
+
+
+        }
+
+        for (Node node:graph.getNodes())
+        {
 
             ((GenericBank) node).draw(graphics2D);
         }
@@ -134,17 +175,47 @@ public class JMap extends JPanel implements ActionListener {
             for (Node node:graph.getNodes())
             {
                 if (((GenericBank)node).getHitBox().intersects(y.getBounds2D()))
+                {
                     System.out.println(node.toString());
+                    highLightRoad(node);
+                }
 
                 for (Edge edge:node.getConnections())
                   if (((Road)edge).getHitBox().intersects(y.getBounds()))
                   {
-                      ((Road)edge).setColor(Color.RED);
                       System.out.println(edge.toString());
                   }
 
 
 
+
+            }
+
+        }
+
+    }
+
+    public void collisionDetectionNodeSelection(Point2D e)
+    {
+
+
+        Polygon y=new Polygon();
+
+        if(e!=null) {
+
+            e.setLocation(e.getX()/scale,  e.getY()/scale);
+
+            y.addPoint((int) ((e.getX()- 2)), (int) ((e.getY() - 2)));
+
+            y.addPoint((int) ((e.getX() + 2)), (int) ((e.getY() + 2)));
+
+
+            for (Node node:graph.getNodes())
+            {
+                if (((GenericBank)node).getHitBox().intersects(y.getBounds2D()))
+                {
+                    graph.computePaths(node);
+                }
 
             }
 

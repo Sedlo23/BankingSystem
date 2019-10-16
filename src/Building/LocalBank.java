@@ -13,7 +13,7 @@ import java.awt.geom.Point2D;
  */
 public class LocalBank extends GenericBank {
 
-    private int size=30;
+    private int size=60;
 
     public LocalBank(Point2D position, Color color) {
         super(position, color,"NONE");
@@ -54,6 +54,11 @@ public class LocalBank extends GenericBank {
         return new Ellipse2D.Double((int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()-(size/2)),(int)((size)),(int)((size))).getBounds2D();
     }
 
+    @Override
+    public void setDefaultColor() {
+            this.setColor(Color.YELLOW);
+    }
+
     public void setColor(Color color) {
         super.setColor(color);
     }
@@ -62,4 +67,6 @@ public class LocalBank extends GenericBank {
     public String toString() {
         return "LocalBank"+super.toString();
     }
+
+
 }

@@ -64,8 +64,29 @@ public class Node implements Comparable{
                 '}';
     }
 
+    public Edge findPath(Node destination)
+    {
+        for (Edge edge:getConnections())
+        {
+            if (edge.getEnd().equals(destination))
+                return edge;
+
+        }
+
+        return null;
+    }
+
     @Override
     public int compareTo(Object o) {
         return Double.compare(minDistance, ((Node) o).getMinDistance());
+    }
+
+
+    public void clearPath()
+    {
+
+        prev=null;
+
+        minDistance=Double.POSITIVE_INFINITY;
     }
 }

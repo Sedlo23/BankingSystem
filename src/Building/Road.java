@@ -18,6 +18,8 @@ public class Road extends Edge implements IDrawAble {
 
     private Integer x1,x2,y1,y2;
 
+    private int stroke=3;
+
 
     public Road(GenericBank start, GenericBank end,int weight,Color color) {
         super(start,end,weight);
@@ -49,6 +51,8 @@ public class Road extends Edge implements IDrawAble {
 
         graphics2D.setColor(this.getColor());
 
+        graphics2D.setStroke(new BasicStroke(getStroke()));
+
        graphics2D.draw(this.getHitBox());
 
 
@@ -68,4 +72,24 @@ public class Road extends Edge implements IDrawAble {
     public String toString() {
         return "Road{"+getStart().getName()+","+getEnd().getName()+","+getWeight()+"}";
     }
+
+    @Override
+    public void setDefaultColor() {
+        this.setColor(Color.BLACK);
+    }
+
+    public int getStroke() {
+        return stroke;
+    }
+
+    public void setStroke(int stroke) {
+        this.stroke = stroke;
+    }
+
+    public void setDefaultStroke()
+    {
+        setStroke(3);
+    }
+
 }
+
