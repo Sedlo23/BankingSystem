@@ -61,7 +61,6 @@ public class Node implements Comparable{
                 "name='" + name + '\'' +
                 ", connections=" + connections.size() +
                 ", minDistance=" + minDistance +
-                ", prev=" + prev +
                 '}';
     }
 

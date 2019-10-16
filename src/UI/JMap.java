@@ -55,13 +55,20 @@ public class JMap extends JPanel implements ActionListener {
     @Deprecated
     public void populateGraph()
     {
-            for (int i=0;i<10;i++)
-                this.graph.addNode(new LocalBank(new Point2D.Double(100+Math.random()*1000,10+Math.random()*1000),Color.YELLOW));
 
-            for (Node node1:this.graph.getNodes())
-                for (Node node2:this.graph.getNodes()) {
-                    node1.getConnections().add(new Road((GenericBank) node1,(GenericBank) node2,(int)(Math.random()*10),Color.BLACK));
-                }
+        for (int i2=0;i2<80;i2++)
+         for (int i=0;i<80;i++)
+                this.graph.addNode(new LocalBank(new Point2D.Double(i*100+Math.random()*99,i2*100+Math.random()*99),Color.RED,i2+","+i));
+
+        for (Node node1:this.graph.getNodes())
+            for (Node node2:this.graph.getNodes())
+            {
+                if(!node1.equals(node2))
+                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<150)
+                        node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
+            }
+
+
 
     }
 

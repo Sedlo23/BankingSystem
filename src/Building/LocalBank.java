@@ -13,7 +13,7 @@ import java.awt.geom.Point2D;
  */
 public class LocalBank extends GenericBank {
 
-    private int size=60;
+    private int size=30;
 
     public LocalBank(Point2D position, Color color) {
         super(position, color,"NONE");

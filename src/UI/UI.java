@@ -1,8 +1,11 @@
 package UI;
 
+import disMath.Graph;
 import disMath.Node;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.PrintStream;
@@ -23,6 +26,21 @@ public class UI {
     private JTextPane textPaneMessage;
     private JList nodeJList;
     private JButton button1;
+    private JTabbedPane tabbedPane1;
+    private Graph graph;
+
+    public UI() {
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    graph.computePaths(graph.getNodes().get(0));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("UI");
@@ -40,6 +58,8 @@ public class UI {
         LeftPanel =a;
 
         a.populateGraph();
+
+        graph=a.getGraph();
 
         LeftPanel.addMouseMotionListener(new MouseMotionAdapter() {
             @Override

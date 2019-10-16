@@ -66,6 +66,6 @@ public class Road extends Edge implements IDrawAble {
 
     @Override
     public String toString() {
-        return "Road{"+getStart().getName()+","+getEnd().getName()+"}";
+        return "Road{"+getStart().getName()+","+getEnd().getName()+","+getWeight()+"}";
     }
 }

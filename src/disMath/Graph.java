@@ -1,5 +1,8 @@
 package disMath;
 
+import Building.Road;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -22,8 +25,7 @@ public class Graph {
 
     private List<Node> nodes=new ArrayList<>();
 
-    public void computePaths(Node source)
-    {
+    public void computePaths(Node source) throws InterruptedException {
         source.setMinDistance(0);
 
         PriorityQueue<Node> vertexQueue = new PriorityQueue<>();
@@ -35,6 +37,7 @@ public class Graph {
 
             for (Edge e : u.getConnections())
             {
+                ((Road)e).setColor(Color.green);
                 Node v = e.getEnd();
                 double weight = e.getWeight();
                 double distanceThroughU = u.getMinDistance() + weight;
