@@ -22,6 +22,7 @@ public class UI {
     private JPanel MessagePanel;
     private JTextPane textPaneMessage;
     private JList nodeJList;
+    private JButton button1;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("UI");

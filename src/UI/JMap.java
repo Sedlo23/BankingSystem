@@ -12,8 +12,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import java.util.PriorityQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * UI
@@ -29,6 +27,8 @@ public class JMap extends JPanel implements ActionListener {
     private Timer timer;
 
     private Graph graph;
+
+    private double scale=1;
 
     public JMap()
     {
@@ -90,6 +90,8 @@ public class JMap extends JPanel implements ActionListener {
 
         Graphics2D graphics2D=(Graphics2D)g;
 
+        computeModelDimensions(graphics2D);
+
         for (Node node:graph.getNodes())
         {
             for (Edge edge:node.getConnections())
@@ -115,6 +117,7 @@ public class JMap extends JPanel implements ActionListener {
 
         if(e!=null) {
 
+            e.setLocation(e.getX()/scale,  e.getY()/scale);
 
             y.addPoint((int) ((e.getX()- 2)), (int) ((e.getY() - 2)));
 
@@ -142,37 +145,54 @@ public class JMap extends JPanel implements ActionListener {
 
     }
 
+    public  void computeModelDimensions(Graphics2D g) {
 
-    public void computePathsVisulation(Node source,int delay) throws InterruptedException {
-        source.setMinDistance(0);
+        double MinX=0;
+        double MinY=0;
+        double MaxX=0;
+        double MaxY=0;
 
-        PriorityQueue<Node> vertexQueue = new PriorityQueue<>();
+        for (Node node:graph.getNodes())
+        {
 
-        vertexQueue.add(source);
+            GenericBank genericBank=(GenericBank)node;
 
-        while (!vertexQueue.isEmpty()) {
-            Node u = vertexQueue.poll();
+            if (genericBank.getPosition().getX() > MaxX)
+                MaxX = genericBank.getPosition().getX();
 
-            for (Edge e : u.getConnections())
-            {
-                Node v = e.getEnd();
-                ((Road)e).setColor(Color.YELLOW);
-                double weight = e.getWeight();
-                double distanceThroughU = u.getMinDistance() + weight;
-                if (distanceThroughU < v.getMinDistance()) {
-                    vertexQueue.remove(v);
-                    v.setMinDistance( distanceThroughU) ;
-                    v.setPrev(u);
-                    vertexQueue.add(v);
-                    ((GenericBank)v).setColor(Color.BLUE);
-                    TimeUnit.SECONDS.sleep(delay);
+            if (genericBank.getPosition().getY() > MaxY)
+                MaxY = genericBank.getPosition().getY();
 
-                }
-            }
+            if (genericBank.getPosition().getX() < MinX)
+                MinX = genericBank.getPosition().getX();
+
+            if (genericBank.getPosition().getY() < MinY)
+                MinY = genericBank.getPosition().getY();
+
         }
 
-    }
 
+        double Width = ( Math.abs(MaxX - MinX))+60;
+
+        double Height = ( Math.abs(MaxY - MinY))+60;
+
+        double scaleX=this.getWidth()/Width;
+
+        double scaleY=this.getHeight()/Height;
+
+
+        g.translate(-MinX*scaleX, -MinY*scaleY);
+
+        double scale= Math.min(scaleX, scaleY);
+
+        this.scale=scale;
+
+        g.scale(scale, scale);
+
+
+
+
+    }
 
 
 }
