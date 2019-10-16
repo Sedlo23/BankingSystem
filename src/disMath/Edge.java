@@ -8,6 +8,8 @@ class Edge {
 
     private int weight;
 
+    private Object carriedObject;
+
     public Edge(Node start, Node end, int weight) {
         this.setStart(start);
         this.setEnd(end);
@@ -36,6 +38,14 @@ class Edge {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public Object getCarriedObject() {
+        return carriedObject;
+    }
+
+    public void setCarriedObject(Object carriedObject) {
+        this.carriedObject = carriedObject;
     }
 
     @Override

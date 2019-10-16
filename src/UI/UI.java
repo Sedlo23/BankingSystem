@@ -1,5 +1,7 @@
 package UI;
 
+import javax.swing.*;
+
 /**
  * UI
  *
@@ -9,23 +11,23 @@ package UI;
  */
 public class UI {
 
-// =========== CONSTANTS ===========
 
-// =========== /CONSTANTS ===========
+    private JPanel MainJpanel;
+    private JPanel LeftPanel;
 
-// =========== VARIABLES ===========
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("UI");
+        frame.setContentPane(new UI().MainJpanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+    }
 
-// =========== /VARIABLES ===========
+    private void createUIComponents() {
+        JMap a= new JMap();
 
-// =========== CONSTRUCTOR ===========
+        LeftPanel =a;
 
-// =========== /CONSTRUCTOR ===========
-
-// =========== SPECIAL METHODS ===========
-
-// =========== /SPECIAL METHODS ===========
-
-// =========== GETTERS & SETTERS ===========
-
-// =========== /GETTERS & SETTERS ===========
+        a.populateGraph();
+    }
 }

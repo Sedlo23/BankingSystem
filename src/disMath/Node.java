@@ -1,4 +1,5 @@
 package disMath;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class Node implements Comparable{
 
     private Node prev;
 
-    public Node(String carriedObject) {
+    public Node(Object carriedObject) {
         this.carriedObject = carriedObject;
     }
 
@@ -22,7 +23,7 @@ public class Node implements Comparable{
         this.getConnections().add(new Edge(this,node,weight));
     }
 
-    private Object getCarriedObject() {
+    public Object getCarriedObject() {
         return carriedObject;
     }
 

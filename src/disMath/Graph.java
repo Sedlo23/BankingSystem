@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 
-class Graph {
+public class Graph {
 
-    private List<Node> getNodes() {
+    public List<Node> getNodes() {
         return nodes;
     }
 
@@ -40,7 +40,6 @@ class Graph {
                 double distanceThroughU = u.getMinDistance() + weight;
                 if (distanceThroughU < v.getMinDistance()) {
                     vertexQueue.remove(v);
-
                     v.setMinDistance( distanceThroughU) ;
                     v.setPrev(u);
                     vertexQueue.add(v);
@@ -49,6 +48,8 @@ class Graph {
         }
 
     }
+
+
 
 
 
