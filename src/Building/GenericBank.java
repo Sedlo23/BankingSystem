@@ -1,5 +1,6 @@
 package Building;
 
+import Building.Vehicles.Vehicle;
 import disMath.Node;
 
 import java.awt.*;
@@ -43,4 +44,11 @@ public abstract class GenericBank extends Node implements IDrawAble
     public void setColor(Color color) {
         this.color = color;
     }
+
+    public void vehicleArrive(Vehicle vehicle)
+    {
+
+
+    }
+
 }

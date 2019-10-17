@@ -3,6 +3,7 @@ package UI;
 import Building.GenericBank;
 import Building.LocalBank;
 import Building.Road;
+import Building.Vehicles.Vehicle;
 import disMath.Edge;
 import disMath.Graph;
 import disMath.Node;
@@ -23,7 +24,7 @@ import java.awt.geom.Point2D;
 public class JMap extends JPanel implements ActionListener {
 
 
-    private int refreshTime=100;
+    private int refreshTime=10;
 
     private Timer timer;
 
@@ -31,11 +32,16 @@ public class JMap extends JPanel implements ActionListener {
 
     private double scale=1;
 
+
+    Vehicle testVeh=new Vehicle(new Point2D.Double(10,10),4);
+
     public JMap()
     {
         this(new Graph());
 
         this.timer=new Timer(refreshTime,this);
+
+
 
     }
 
@@ -53,26 +59,42 @@ public class JMap extends JPanel implements ActionListener {
     }
 
 
-    public void populateGraph(int numberOfRows,int numberOfColumns) throws CloneNotSupportedException {
+    public void populateGraph(int numberOfRows,int numberOfColumns)  {
 
         for (int i2=0;i2<numberOfColumns;i2++)
          for (int i=0;i<numberOfRows;i++)
-                this.graph.addNode(new LocalBank(new Point2D.Double(i*100+Math.random()*99,i2*100+Math.random()*99),Color.RED,i2+","+i));
+                this.graph.addNode(new LocalBank(new Point2D.Double(i*500+Math.random()*100,i2*500+Math.random()*100),Color.RED,i2+","+i));
 
         for (Node node1:this.graph.getNodes())
             for (Node node2:this.graph.getNodes())
             {
                 if(!node1.equals(node2))
-                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<150)
+                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<1050)
                         node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
             }
 
 
     }
 
+    public void testVehicle(int numberOfColumns) throws CloneNotSupportedException {
+
+        for (int i2=0;i2<numberOfColumns;i2++)
+                this.graph.addNode(new LocalBank(new Point2D.Double(i2*500+Math.random()*100,500+Math.random()*100),Color.RED,i2+""));
+
+        for (Node node1:this.graph.getNodes())
+            for (Node node2:this.graph.getNodes())
+            {
+                if(!node1.equals(node2))
+                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<1050)
+                        node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
+            }
+
+
+
+    }
+
+
     public void highLightRoad(Node source) {
-
-
 
         for (Node node:graph.getNodes())
             for (Edge edge:node.getConnections())
@@ -87,6 +109,9 @@ public class JMap extends JPanel implements ActionListener {
             ((Road)edge).setStroke(30);
 
         }
+
+         testVeh.setPath(graph.getShortens(source));
+
 
     }
 
@@ -104,6 +129,8 @@ public class JMap extends JPanel implements ActionListener {
             ((Road)edge).setStroke(30);
 
         }
+
+
 
     }
 
@@ -147,6 +174,12 @@ public class JMap extends JPanel implements ActionListener {
 
             ((GenericBank) node).draw(graphics2D);
         }
+
+
+        testVeh.draw(graphics2D);
+
+        testVeh.move(1);
+
 
 
 
@@ -205,9 +238,9 @@ public class JMap extends JPanel implements ActionListener {
 
             e.setLocation(e.getX()/scale,  e.getY()/scale);
 
-            y.addPoint((int) ((e.getX()- 2)), (int) ((e.getY() - 2)));
+            y.addPoint((int) ((e.getX()- 10)), (int) ((e.getY() - 10)));
 
-            y.addPoint((int) ((e.getX() + 2)), (int) ((e.getY() + 2)));
+            y.addPoint((int) ((e.getX() + 10)), (int) ((e.getY() + 10)));
 
 
             for (Node node:graph.getNodes())

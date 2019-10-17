@@ -16,18 +16,12 @@ public class Road extends Edge implements IDrawAble {
 
     private Color color;
 
-    private Integer x1,x2,y1,y2;
 
     private int stroke=3;
-
 
     public Road(GenericBank start, GenericBank end,int weight,Color color) {
         super(start,end,weight);
         this.color = color;
-        x1=(int)start.getPosition().getX();
-        y1=(int)start.getPosition().getY();
-        x2 =(int)end.getPosition().getX();
-        y2=(int)end.getPosition().getY();
 
     }
 
@@ -39,8 +33,8 @@ public class Road extends Edge implements IDrawAble {
     {
         Polygon tmpPolygon =new Polygon();
 
-        tmpPolygon.addPoint(x1,y1);
-        tmpPolygon.addPoint(x2,y2);
+        tmpPolygon.addPoint((int)((GenericBank)getStart()).getPosition().getX(),(int)((GenericBank)getStart()).getPosition().getY());
+        tmpPolygon.addPoint((int)((GenericBank)getEnd()).getPosition().getX(),(int)((GenericBank)getEnd()).getPosition().getY());
 
         return  tmpPolygon;
 
@@ -60,8 +54,9 @@ public class Road extends Edge implements IDrawAble {
 
     @Override
     public Point2D getPosition() {
-        return new Point2D.Double(((x1+x2)/2),((y1+y2))/2);
+        return null;
     }
+
 
     @Override
     public Color getColor() {
