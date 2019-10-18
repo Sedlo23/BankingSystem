@@ -1,8 +1,6 @@
 package UI;
 
-import Building.GenericBank;
-import Building.LocalBank;
-import Building.Road;
+import Building.*;
 import Building.Vehicles.Vehicle;
 import disMath.Edge;
 import disMath.Graph;
@@ -59,27 +57,42 @@ public class JMap extends JPanel implements ActionListener {
     }
 
 
-    public void populateGraph(int numberOfRows,int numberOfColumns)  {
+    public void populateGraph(int numberOfRows,int numberOfColumns,int numberOfRegion)  {
+        for (int z1=0;z1<numberOfRegion;z1++)
+     for (int z=0;z<numberOfRegion;z++)    {
 
         for (int i2=0;i2<numberOfColumns;i2++)
-         for (int i=0;i<numberOfRows;i++)
-                this.graph.addNode(new LocalBank(new Point2D.Double(i*500+Math.random()*100,i2*500+Math.random()*100),Color.RED,i2+","+i));
+            for (int i=0;i<numberOfRows;i++)
+                if (i==2&&i2==2&&z==2&&z1==2)
+                    this.graph.addNode(new CentralBank(new Point2D.Double(i*250+Math.random()*100+1500*z,i2*250+Math.random()*100+1500*z1),Color.MAGENTA,i2+","+i));
+                else
+                if (i==2&&i2==2)
+                        this.graph.addNode(new RegionBank(new Point2D.Double(i*250+Math.random()*100+1500*z,i2*250+Math.random()*100+1500*z1),Color.BLUE,i2+","+i));
+                    else
+                        this.graph.addNode(new LocalBank(new Point2D.Double(i*250+Math.random()*100+1500*z,i2*250+Math.random()*100+1500*z1),Color.RED,i2+","+i));
 
         for (Node node1:this.graph.getNodes())
             for (Node node2:this.graph.getNodes())
             {
+                if (node1 instanceof RegionBank||node1 instanceof CentralBank)
+                    if (node2 instanceof RegionBank||node2 instanceof CentralBank)
+                        if(!node1.equals(node2))
+                            if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<2000)
+                                node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
+
                 if(!node1.equals(node2))
-                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<1050)
+                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<350)
                         node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
             }
 
 
-    }
+
+    }}
 
     public void testVehicle(int numberOfColumns) throws CloneNotSupportedException {
 
         for (int i2=0;i2<numberOfColumns;i2++)
-                this.graph.addNode(new LocalBank(new Point2D.Double(i2*500+Math.random()*100,500+Math.random()*100),Color.RED,i2+""));
+                this.graph.addNode(new LocalBank(new Point2D.Double(i2*100+Math.random()*50,200+Math.random()*100),Color.RED,i2+""));
 
         for (Node node1:this.graph.getNodes())
             for (Node node2:this.graph.getNodes())

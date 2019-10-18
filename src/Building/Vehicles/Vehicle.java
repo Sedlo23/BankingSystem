@@ -21,9 +21,9 @@ public class Vehicle implements IDrawAble {
 
     private double speed;
 
-    private int size=50;
+    private int size=80;
 
-    private Color color = Color.magenta;
+    private Color color = Color.GREEN;
 
     private LinkedList<Edge> path=new LinkedList<>();
 

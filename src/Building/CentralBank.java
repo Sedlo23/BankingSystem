@@ -11,17 +11,17 @@ import java.awt.geom.Point2D;
  * @version 1.0
  * @since 16.10.19
  */
-public class LocalBank extends GenericBank {
+public class CentralBank extends GenericBank {
 
-    private final int priority=0;
+    private final int priority=2;
 
-    private int size=100;
+    private int size=200;
 
-    public LocalBank(Point2D position, Color color) {
+    public CentralBank(Point2D position, Color color) {
         super(position, color,"NONE");
     }
 
-    public LocalBank(Point2D position, Color color,String name) {
+    public CentralBank(Point2D position, Color color, String name) {
         super(position, color,name);
     }
 
@@ -31,9 +31,6 @@ public class LocalBank extends GenericBank {
         graphics2D.setColor(this.getColor());
 
         graphics2D.fillOval((int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()-(size/2)),(int)((size)),(int)((size)));
-
-
-        //graphics2D.drawString(this.toString(),(int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()));
 
     }
 
@@ -58,7 +55,7 @@ public class LocalBank extends GenericBank {
 
     @Override
     public void setDefaultColor() {
-            this.setColor(Color.YELLOW);
+            this.setColor(Color.BLUE);
     }
 
     public void setColor(Color color) {

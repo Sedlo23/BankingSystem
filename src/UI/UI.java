@@ -53,7 +53,7 @@ public class UI {
 
         LeftPanel =a;
 
-        a.populateGraph(50,50);
+        a.populateGraph(5,5,5);
 
         graph=a.getGraph();
 

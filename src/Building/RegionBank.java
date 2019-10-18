@@ -11,17 +11,17 @@ import java.awt.geom.Point2D;
  * @version 1.0
  * @since 16.10.19
  */
-public class LocalBank extends GenericBank {
+public class RegionBank extends GenericBank {
 
-    private final int priority=0;
+    private final int priority=1;
 
-    private int size=100;
+    private int size=150;
 
-    public LocalBank(Point2D position, Color color) {
+    public RegionBank(Point2D position, Color color) {
         super(position, color,"NONE");
     }
 
-    public LocalBank(Point2D position, Color color,String name) {
+    public RegionBank(Point2D position, Color color, String name) {
         super(position, color,name);
     }
 
