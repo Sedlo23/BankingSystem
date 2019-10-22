@@ -67,7 +67,7 @@ public class LocalBank extends GenericBank {
 
     @Override
     public String toString() {
-        return "LocalBank"+super.toString();
+        return getName()+":"+super.toString();
     }
 
 

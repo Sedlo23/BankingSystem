@@ -1,10 +1,12 @@
 package UI;
 
-import disMath.Graph;
+import Simulation.Simulation;
 import disMath.Node;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 
 /**
@@ -14,7 +16,7 @@ import java.io.PrintStream;
  * @version 1.0
  * @since 15.10.19
  */
-public class UI {
+public class UI implements ActionListener  {
 
 
     private JPanel MainJpanel;
@@ -23,19 +25,20 @@ public class UI {
     private JTextPane textPaneMessage;
     private JList nodeJList;
     private JButton button1;
-    private JTabbedPane tabbedPane1;
-    private Graph graph;
+    private Simulation simulation;
+    private Timer tm =new Timer(10,this);
 
     public UI() {
+
+
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
-                    graph.computePaths(graph.getNodes().get(0));
-
+                simulation.nextStep(1);
+                nodeJList.updateUI();
             }
         });
-
+        tm.start();
     }
 
     public static void main(String[] args) {
@@ -49,13 +52,18 @@ public class UI {
     }
 
     private void createUIComponents() throws CloneNotSupportedException {
+
         JMap a= new JMap();
 
         LeftPanel =a;
 
-        a.populateGraph(5,5,5);
+        simulation=new Simulation(a);
 
-        graph=a.getGraph();
+        a.populateGraph(5,5,20);
+
+
+
+
 
         LeftPanel.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
@@ -85,10 +93,47 @@ public class UI {
 
         DefaultListModel<Node> defaultListModel = new DefaultListModel<>();
 
+
         a.getGraph().getNodes().forEach(x -> defaultListModel.addElement(x));
 
         nodeJList.setModel(defaultListModel);
 
+        a.setDoubleBuffered(true);
+
     }
 
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        simulation.nextStep(1);
+    }
+
+    private BufferedImage toCompatibleImage(BufferedImage image)
+    {
+        // obtain the current system graphical settings
+        GraphicsConfiguration gfxConfig = GraphicsEnvironment.
+                getLocalGraphicsEnvironment().getDefaultScreenDevice().
+                getDefaultConfiguration();
+
+        /*
+         * if image is already compatible and optimized for current system
+         * settings, simply return it
+         */
+        if (image.getColorModel().equals(gfxConfig.getColorModel()))
+            return image;
+
+        // image is not optimized, so create a new image that is
+        BufferedImage newImage = gfxConfig.createCompatibleImage(
+                image.getWidth(), image.getHeight(), image.getTransparency());
+
+        // get the graphics context of the new image to draw the old image on
+        Graphics2D g2d = newImage.createGraphics();
+
+        // actually draw the image and dispose of context no longer needed
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+
+        // return the new optimized image
+        return newImage;
+    }
 }

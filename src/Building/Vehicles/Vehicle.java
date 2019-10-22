@@ -23,7 +23,7 @@ public class Vehicle implements IDrawAble {
 
     private int size=80;
 
-    private Color color = Color.GREEN;
+    private Color color = Color.BLUE;
 
     private LinkedList<Edge> path=new LinkedList<>();
 
@@ -33,7 +33,9 @@ public class Vehicle implements IDrawAble {
 
     private boolean backing=false;
 
-    private boolean onRoad=true;
+    private boolean onRoad=false;
+
+    private int moneyAmount=0;
 
     int reamingDistance;
 
@@ -65,7 +67,7 @@ public class Vehicle implements IDrawAble {
         return angle;
     }
 
-    public void move(int time)
+    public void move(double time)
     {
             if(currentRoad!=null&&onRoad)   {
                 if(!backing) {
@@ -146,11 +148,11 @@ public class Vehicle implements IDrawAble {
 
     @Override
     public void draw(Graphics2D graphics2D) {
-
+        if(onRoad){
         graphics2D.setColor(this.getColor());
 
         graphics2D.fillOval((int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()-(size/2)),(int)((size)),(int)((size)));
-
+}
     }
 
     public Point2D getPosition() {
@@ -215,5 +217,24 @@ public class Vehicle implements IDrawAble {
 
     public void setReamingDistance(int reamingDistance) {
         this.reamingDistance = reamingDistance;
+    }
+
+    public int unloadMoney()
+    {
+        int tmp =moneyAmount;
+        moneyAmount=0;
+        return tmp;
+    }
+
+    public boolean isOnRoad() {
+        return onRoad;
+    }
+
+    public void setOnRoad(boolean onRoad) {
+        this.onRoad = onRoad;
+    }
+
+    public void setMoneyAmount(int moneyAmount) {
+        this.moneyAmount = moneyAmount;
     }
 }

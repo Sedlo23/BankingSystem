@@ -8,8 +8,6 @@ import disMath.Node;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 
 /**
@@ -19,26 +17,19 @@ import java.awt.geom.Point2D;
  * @version 1.0
  * @since 16.10.19
  */
-public class JMap extends JPanel implements ActionListener {
+public class JMap extends JPanel {
 
-
-    private int refreshTime=10;
-
-    private Timer timer;
+    private boolean drawRoad=true;
 
     private Graph graph;
 
     private double scale=1;
 
 
-    Vehicle testVeh=new Vehicle(new Point2D.Double(10,10),4);
 
     public JMap()
     {
         this(new Graph());
-
-        this.timer=new Timer(refreshTime,this);
-
 
 
     }
@@ -49,13 +40,10 @@ public class JMap extends JPanel implements ActionListener {
 
         this.graph=graph;
 
-        this.timer=new Timer(refreshTime,this);
-
-        timer.start();
+       System.out.println( this.isOptimizedDrawingEnabled());
 
 
     }
-
 
     public void populateGraph(int numberOfRows,int numberOfColumns,int numberOfRegion)  {
         for (int z1=0;z1<numberOfRegion;z1++)
@@ -71,6 +59,10 @@ public class JMap extends JPanel implements ActionListener {
                     else
                         this.graph.addNode(new LocalBank(new Point2D.Double(i*250+Math.random()*100+1500*z,i2*250+Math.random()*100+1500*z1),Color.RED,i2+","+i));
 
+
+
+    }
+
         for (Node node1:this.graph.getNodes())
             for (Node node2:this.graph.getNodes())
             {
@@ -85,9 +77,23 @@ public class JMap extends JPanel implements ActionListener {
                         node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
             }
 
+        for (Node node1:this.graph.getNodes())
+            for (Node node2:this.graph.getNodes())
+                if (node1 instanceof CentralBank)
+                    ((GenericBank)node2).setResponsibleBank((GenericBank)node1);
 
+        for (Node node1:this.graph.getNodes())
+            if (node1 instanceof CentralBank)
+            {
+                ( (GenericBank)node1).setMoneyAmount(1000000000);
+                for (int i =0;i<10000;i++)
+                    ( (GenericBank)node1).getVehicleList().add(new Vehicle(new Point2D.Double(0,0),150,60));
+            }
 
-    }}
+        for (Node node1:this.graph.getNodes())
+            ( (GenericBank)node1).setParentGraph(this.graph);
+
+    }
 
     public void testVehicle(int numberOfColumns) throws CloneNotSupportedException {
 
@@ -118,12 +124,12 @@ public class JMap extends JPanel implements ActionListener {
             }
         for (Edge edge:graph.getShortens(source))
         {
-            ((Road)edge).setColor(Color.BLUE);
+            ((Road)edge).setColor(Color.lightGray);
             ((Road)edge).setStroke(30);
 
         }
 
-         testVeh.setPath(graph.getShortens(source));
+
 
 
     }
@@ -155,13 +161,8 @@ public class JMap extends JPanel implements ActionListener {
         this.graph = graph;
     }
 
-    public int getRefreshTime() {
-        return refreshTime;
-    }
 
-    public void setRefreshTime(int refreshTime) {
-        this.refreshTime = refreshTime;
-    }
+
 
     @Override
     public void paint(Graphics g) {
@@ -174,34 +175,27 @@ public class JMap extends JPanel implements ActionListener {
         computeModelDimensions(graphics2D);
 
 
+
+
         for (Node node:graph.getNodes())
         {
+            if(drawRoad)
             for (Edge edge:node.getConnections())
                 ((Road)edge).draw(graphics2D);
 
-
-        }
-
-        for (Node node:graph.getNodes())
-        {
-
             ((GenericBank) node).draw(graphics2D);
+
+            for (Vehicle vehicle:  ((GenericBank) node).getVehicleList())
+                vehicle.draw(graphics2D);
         }
 
 
-        testVeh.draw(graphics2D);
-
-        testVeh.move(1);
 
 
 
 
     }
 
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        repaint();
-    }
 
     public void collisionDetection(Point2D e)
     {
