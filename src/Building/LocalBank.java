@@ -1,5 +1,7 @@
 package Building;
 
+import disMath.Graph;
+
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -13,17 +15,27 @@ import java.awt.geom.Point2D;
  */
 public class LocalBank extends GenericBank {
 
-    private final int priority=0;
 
-    private int size=100;
 
-    public LocalBank(Point2D position, Color color) {
-        super(position, color,"NONE");
+
+
+    private int size;
+
+    public LocalBank(Point2D position, Color color, String name, int size) {
+        super(position, color, name);
+        this.size = size;
     }
 
-    public LocalBank(Point2D position, Color color,String name) {
-        super(position, color,name);
+    public LocalBank(Point2D position, Color color, String name, int moneyAmount, int size) {
+        super(position, color, name, moneyAmount);
+        this.size = size;
     }
+
+    public LocalBank(Point2D position, Color color, String name, int moneyAmount, Graph parentGraph, int minMoneyAmount, int size) {
+        super(position, color, name, moneyAmount, parentGraph,minMoneyAmount);
+        this.size = size;
+    }
+
 
     @Override
     public void draw(Graphics2D graphics2D)
@@ -67,8 +79,6 @@ public class LocalBank extends GenericBank {
 
     @Override
     public String toString() {
-        return getName()+":"+super.toString();
+        return getName()+super.toString();
     }
-
-
 }

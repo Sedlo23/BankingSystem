@@ -69,35 +69,39 @@ public class Vehicle implements IDrawAble {
 
     public void move(double time)
     {
+
+
+
             if(currentRoad!=null&&onRoad)   {
                 if(!backing) {
-            if (reamingDistance<1)
-                 {
-                if((iterator==0))
-                {
-                    ((GenericBank)currentRoad.getStart()).vehicleArrive(this);
-                    backing=true;
-                    return;
-                }
-                else {
-                    iterator--;
-                    setCurrentRoad(path.get(iterator));
-                }
-       }
+                    if (reamingDistance<0)
+                    {
+                        if((iterator==0))
+                        {
+                            ((GenericBank)currentRoad.getStart()).vehicleArrive(this);
+                            backing=true;
+                            return;
+                        }
+                        else {
+                            iterator--;
+                            setCurrentRoad(path.get(iterator));
+                        }
+                    }
 
-        double ang = getAngle(((GenericBank)currentRoad.getStart()).getPosition(), ((GenericBank)currentRoad.getEnd()).getPosition());
-        double sin = Math.sin(Math.toRadians(ang)) ;
-        double cos = Math.cos(Math.toRadians(ang)) ;
+                    double ang = getAngle(((GenericBank)currentRoad.getStart()).getPosition(), ((GenericBank)currentRoad.getEnd()).getPosition());
+                    double sin = Math.sin(Math.toRadians(ang)) ;
+                    double cos = Math.cos(Math.toRadians(ang)) ;
 
-        this.setPosition(new Point2D.Double(
-                this.getPosition().getX()+getSpeed()*time * cos,
-                this.getPosition().getY()+getSpeed()*time *sin));
+                    this.setPosition(new Point2D.Double(
+                            this.getPosition().getX()+getSpeed()*time*cos,
+                            this.getPosition().getY()+getSpeed()*time *sin));
 
-        reamingDistance-=getSpeed()*time;
+                    reamingDistance-=Math.abs(getSpeed()*time*cos)+Math.abs(getSpeed()*time*sin);
+
 
                 }else
                 {
-                    if (reamingDistance<1)
+                    if (reamingDistance<0)
                     {
                         if((iterator==path.size()))
                         {
@@ -119,11 +123,13 @@ public class Vehicle implements IDrawAble {
                             this.getPosition().getX()+getSpeed()*time * cos,
                             this.getPosition().getY()+getSpeed()*time *sin));
 
-                    reamingDistance-=getSpeed()*time;
+                    reamingDistance-=Math.abs(getSpeed()*time*cos)+Math.abs(getSpeed()*time*sin);
+
 
 
                 }
-}
+            }
+
 
 
     }

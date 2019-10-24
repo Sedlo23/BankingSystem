@@ -5,6 +5,7 @@ import Building.Vehicles.Vehicle;
 import UI.JMap;
 import disMath.Node;
 
+
 /**
  * Simulation
  *
@@ -25,7 +26,23 @@ public class Simulation {
     public void nextStep(double time)
     {
 
+        if (time<0.10)
+        {
+            timePassed+=time;
 
+            for (Node genericBank:map.getGraph().getNodes())
+            {
+                ((GenericBank)genericBank).bankingActivity(time);
+                for (Vehicle vehicle:((GenericBank)genericBank).getVehicleList())
+                {
+                    vehicle.move(time);
+                }
+            } }
+        else {
+            double tmpTime =time;
+            time=0.1;
+            for (double i =0;i<tmpTime;i+=0.1){
+        timePassed+=time;
 
         for (Node genericBank:map.getGraph().getNodes())
         {
@@ -35,7 +52,37 @@ public class Simulation {
                 vehicle.move(time);
             }
         }
+                map.repaint();
+            }
 
-        map.repaint();
+    }
+
+        if ((int)time%24==0)
+            map.getRootBank().setMoneyAmount(750000);
+
+
+    }
+
+    public String getDate() {
+        {
+            int tmpTime=(int)(getTimePassed()*60);
+            return ""+tmpTime/24/60+"D :"+tmpTime/60%24+"H :"+tmpTime%60+"M";
+        }
+    }
+
+    public double getTimePassed() {
+        return timePassed;
+    }
+
+    public void setTimePassed(double timePassed) {
+        this.timePassed = timePassed;
+    }
+
+    public JMap getMap() {
+        return map;
+    }
+
+    public void setMap(JMap map) {
+        this.map = map;
     }
 }

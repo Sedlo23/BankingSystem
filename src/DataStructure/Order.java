@@ -9,8 +9,8 @@ import Building.GenericBank;
  * @version 1.0
  * @since 22.10.19
  */
-public class Order implements Comparable {
-
+public class Order {
+private double time=0;
 private int moneyAmount;
 private GenericBank sender;
 
@@ -35,8 +35,5 @@ private GenericBank sender;
         this.sender = sender;
     }
 
-    @Override
-    public int compareTo(Object o) {
-        return 0;
-    }
+
 }

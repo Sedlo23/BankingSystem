@@ -25,6 +25,11 @@ public class CentralBank extends GenericBank {
         super(position, color,name);
     }
 
+    public CentralBank(Point2D position, Color color, String name,int size) {
+        super(position, color,name);
+        this.size=size;
+    }
+
     @Override
     public void draw(Graphics2D graphics2D)
     {
@@ -64,10 +69,16 @@ public class CentralBank extends GenericBank {
 
     @Override
     public String toString() {
-        return "LocalBank"+super.toString();
+        return "Central Bank "+getName();
     }
 
+    @Override
+    public void bankingActivity(double time) {
+        super.bankingActivity(time);
+    }
 
-
-
+    @Override
+    public GenericBank getResponsibleBank() {
+        return null;
+    }
 }

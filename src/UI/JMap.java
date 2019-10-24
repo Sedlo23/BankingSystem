@@ -1,14 +1,25 @@
 package UI;
 
-import Building.*;
+import Building.CentralBank;
+import Building.GenericBank;
+import Building.LocalBank;
+import Building.Road;
 import Building.Vehicles.Vehicle;
 import disMath.Edge;
 import disMath.Graph;
 import disMath.Node;
 
 import javax.swing.*;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * UI
@@ -17,14 +28,19 @@ import java.awt.geom.Point2D;
  * @version 1.0
  * @since 16.10.19
  */
-public class JMap extends JPanel {
+public class JMap extends JPanel implements TreeModel {
 
-    private boolean drawRoad=true;
+    private boolean drawRoad=false;
+
+    private boolean visibility=true;
 
     private Graph graph;
 
     private double scale=1;
 
+    private GenericBank rootBank;
+
+    private Random random=new Random();
 
 
     public JMap()
@@ -45,94 +61,100 @@ public class JMap extends JPanel {
 
     }
 
-    public void populateGraph(int numberOfRows,int numberOfColumns,int numberOfRegion)  {
-        for (int z1=0;z1<numberOfRegion;z1++)
-     for (int z=0;z<numberOfRegion;z++)    {
+    @SuppressWarnings("Magic numbers, name genarator etc ... just for the sake of being here")
+    public void populateGraph()  {
 
-        for (int i2=0;i2<numberOfColumns;i2++)
-            for (int i=0;i<numberOfRows;i++)
-                if (i==2&&i2==2&&z==2&&z1==2)
-                    this.graph.addNode(new CentralBank(new Point2D.Double(i*250+Math.random()*100+1500*z,i2*250+Math.random()*100+1500*z1),Color.MAGENTA,i2+","+i));
-                else
-                if (i==2&&i2==2)
-                        this.graph.addNode(new RegionBank(new Point2D.Double(i*250+Math.random()*100+1500*z,i2*250+Math.random()*100+1500*z1),Color.BLUE,i2+","+i));
-                    else
-                        this.graph.addNode(new LocalBank(new Point2D.Double(i*250+Math.random()*100+1500*z,i2*250+Math.random()*100+1500*z1),Color.RED,i2+","+i));
-
-
-
-    }
-
-        for (Node node1:this.graph.getNodes())
-            for (Node node2:this.graph.getNodes())
-            {
-                if (node1 instanceof RegionBank||node1 instanceof CentralBank)
-                    if (node2 instanceof RegionBank||node2 instanceof CentralBank)
-                        if(!node1.equals(node2))
-                            if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<2000)
-                                node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
-
-                if(!node1.equals(node2))
-                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<350)
-                        node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
-            }
-
-        for (Node node1:this.graph.getNodes())
-            for (Node node2:this.graph.getNodes())
-                if (node1 instanceof CentralBank)
-                    ((GenericBank)node2).setResponsibleBank((GenericBank)node1);
-
-        for (Node node1:this.graph.getNodes())
-            if (node1 instanceof CentralBank)
-            {
-                ( (GenericBank)node1).setMoneyAmount(1000000000);
-                for (int i =0;i<10000;i++)
-                    ( (GenericBank)node1).getVehicleList().add(new Vehicle(new Point2D.Double(0,0),150,60));
-            }
-
-        for (Node node1:this.graph.getNodes())
-            ( (GenericBank)node1).setParentGraph(this.graph);
-
-    }
-
-    public void testVehicle(int numberOfColumns) throws CloneNotSupportedException {
-
-        for (int i2=0;i2<numberOfColumns;i2++)
-                this.graph.addNode(new LocalBank(new Point2D.Double(i2*100+Math.random()*50,200+Math.random()*100),Color.RED,i2+""));
-
-        for (Node node1:this.graph.getNodes())
-            for (Node node2:this.graph.getNodes())
-            {
-                if(!node1.equals(node2))
-                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<1050)
-                        node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
-            }
-
-
-
-    }
-
-
-    public void highLightRoad(Node source) {
-
-        for (Node node:graph.getNodes())
-            for (Edge edge:node.getConnections())
-            {
-                ((Road)edge).setDefaultColor();
-                ((Road)edge).setDefaultStroke();
-
-            }
-        for (Edge edge:graph.getShortens(source))
+        ArrayList<String> arr = new ArrayList<String>();
+        try (BufferedReader br = new BufferedReader(new FileReader("out/production/BankingSystem/Data/names.txt")))
         {
-            ((Road)edge).setColor(Color.lightGray);
-            ((Road)edge).setStroke(30);
 
+            String sCurrentLine;
+
+            while ((sCurrentLine = br.readLine()) != null) {
+                arr.add(sCurrentLine);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
+        Random ran=new Random();
+
+
+       CentralBank centralBank= new CentralBank(
+                new Point2D.Double(256+Math.random()*10,256+Math.random()*10)
+                ,Color.MAGENTA
+                ,arr.get(ran.nextInt(arr.size()))
+                ,25
+        );
+
+
+        for (int x=0;x<100;x++)
+            centralBank.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5));
+
+       setRootBank(centralBank);
+
+       getGraph().addNode(centralBank);
+
+       centralBank.setParentGraph(getGraph());
+
+       for (int x=0;x<10;x++)
+           for (int y=0;y<10;y++)
+           {
+               if (y==4&&x==4)
+                   continue;
+
+               LocalBank Bank = new LocalBank(new Point2D.Double(64*x,64*y),Color.RED,arr.get(ran.nextInt(arr.size()))
+                       ,15
+                       ,getGraph()
+                       ,30000
+                       ,20);
+
+              Bank.setResponsibleBank(centralBank);
+
+              getGraph().addNode(Bank);
+
+              Bank.setParentGraph(getGraph());
+
+           }
+
+
+       for (GenericBank node1:centralBank.getDependingBanks())
+       {
+           for (int x=0;x<10;x++)
+               node1.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5,Color.MAGENTA));
+           for (int x=0;x<50;x++)   {
+
+
+
+           LocalBank Bank = new LocalBank(new Point2D.Double(node1.getPosition().getX()+random.nextInt(80)-20,node1.getPosition().getY()+random.nextInt(80)-20)
+                   ,Color.RED,
+                   arr.get(ran.nextInt(arr.size())),2000,getGraph(),1000,10);
+
+           Bank.setResponsibleBank(node1);
+
+           getGraph().addNode(Bank);
+
+           Bank.setParentGraph(getGraph());
+           }
+       }
+
+
+        //==================================================================
+        for (Node node1:this.graph.getNodes())
+            for (Node node2:this.graph.getNodes())
+            {
+                  if(!node1.equals(node2))
+                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<50)
+                        node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
+            }
+        //==================================================================
 
 
 
     }
+
+
 
     public void highLightRoad(Node source,Node destination) {
 
@@ -167,6 +189,7 @@ public class JMap extends JPanel {
     @Override
     public void paint(Graphics g) {
 
+        if (isVisible()) {
 
         super.paint(g);
 
@@ -176,22 +199,29 @@ public class JMap extends JPanel {
 
 
 
-
         for (Node node:graph.getNodes())
         {
             if(drawRoad)
             for (Edge edge:node.getConnections())
                 ((Road)edge).draw(graphics2D);
 
+        }
+
+        for (Node node:graph.getNodes())
+        {
+
             ((GenericBank) node).draw(graphics2D);
+
+        }
+
+        for (Node node:graph.getNodes())
+        {
 
             for (Vehicle vehicle:  ((GenericBank) node).getVehicleList())
                 vehicle.draw(graphics2D);
         }
 
-
-
-
+        }
 
 
     }
@@ -217,7 +247,7 @@ public class JMap extends JPanel {
                 if (((GenericBank)node).getHitBox().intersects(y.getBounds2D()))
                 {
                     System.out.println(node.toString());
-                    highLightRoad(node);
+
                 }
 
                 for (Edge edge:node.getConnections())
@@ -235,33 +265,6 @@ public class JMap extends JPanel {
 
     }
 
-    public void collisionDetectionNodeSelection(Point2D e)
-    {
-
-
-        Polygon y=new Polygon();
-
-        if(e!=null) {
-
-            e.setLocation(e.getX()/scale,  e.getY()/scale);
-
-            y.addPoint((int) ((e.getX()- 10)), (int) ((e.getY() - 10)));
-
-            y.addPoint((int) ((e.getX() + 10)), (int) ((e.getY() + 10)));
-
-
-            for (Node node:graph.getNodes())
-            {
-                if (((GenericBank)node).getHitBox().intersects(y.getBounds2D()))
-                {
-                    graph.computePaths(node);
-                }
-
-            }
-
-        }
-
-    }
 
     public  void computeModelDimensions(Graphics2D g) {
 
@@ -313,4 +316,95 @@ public class JMap extends JPanel {
     }
 
 
+    public GenericBank getRootBank() {
+        return rootBank;
+    }
+
+    public void setRootBank(GenericBank rootBank) {
+        this.rootBank = rootBank;
+    }
+
+    @Override
+    public Object getRoot() {
+        return getRootBank();
+    }
+
+    @Override
+    public Object getChild(Object o, int i) {
+        return ((GenericBank)o).getDependingBanks().get(i);
+    }
+
+    @Override
+    public int getChildCount(Object o) {
+        return((GenericBank)o).getDependingBanks().size();
+    }
+
+    @Override
+    public boolean isLeaf(Object o) {
+        return ((GenericBank)o).getDependingBanks().isEmpty();
+    }
+
+    @Override
+    public void valueForPathChanged(TreePath treePath, Object o) {
+
+    }
+
+    @Override
+    public int getIndexOfChild(Object o, Object o1) {
+        return ((GenericBank)o).getDependingBanks().indexOf(o1);
+    }
+
+    @Override
+    public void addTreeModelListener(TreeModelListener treeModelListener) {
+
+    }
+
+    @Override
+    public void removeTreeModelListener(TreeModelListener treeModelListener) {
+
+    }
+
+    public int outOfMoneyBanks()
+    {
+        int tmp =0;
+
+        for (Node node:graph.getNodes())
+        {
+                if (  ((GenericBank) node).getColor().equals(Color.RED))
+            tmp++;
+
+        }
+        return tmp;
+    }
+
+    public int onRoadCars()
+    {
+        int tmp =0;
+
+        for (Node node:graph.getNodes())
+        {
+            for (Vehicle vehicle:((GenericBank) node).getVehicleList())
+            {
+                 if (vehicle.isOnRoad())
+                    tmp++;
+            }
+        }
+        return tmp;
+    }
+
+    public boolean isVisible() {
+        return visibility;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
+    }
+
+    public boolean isDrawRoad() {
+        return drawRoad;
+    }
+
+    public void setDrawRoad(boolean drawRoad) {
+        this.drawRoad = drawRoad;
+    }
 }
