@@ -29,7 +29,6 @@ public class Simulation {
         if (time<0.10)
         {
             timePassed+=time;
-
             for (Node genericBank:map.getGraph().getNodes())
             {
                 ((GenericBank)genericBank).bankingActivity(time);
@@ -37,11 +36,16 @@ public class Simulation {
                 {
                     vehicle.move(time);
                 }
-            } }
+            }
+
+            map.repaint();
+        }
         else {
+
             double tmpTime =time;
             time=0.1;
-            for (double i =0;i<tmpTime;i+=0.1){
+            for (double i =0;i<tmpTime;i+=0.1)
+            {
         timePassed+=time;
 
         for (Node genericBank:map.getGraph().getNodes())

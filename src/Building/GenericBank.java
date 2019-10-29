@@ -26,6 +26,8 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel
 {
     private boolean moneyOnTheWay=false;
 
+    private boolean QuickPathFinding=true;
+
     private Point2D position;
 
     private Color color;
@@ -193,7 +195,12 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel
 
     public LinkedList<Edge> getPathToRespBank() {
         if (pathToRespBank==null){
-            parentGraph.computePaths(responsibleBank);
+
+            if (QuickPathFinding)
+                parentGraph.computePathsQuick(responsibleBank,this);
+            else
+                parentGraph.computePaths(responsibleBank);
+
             setPathToRespBank(parentGraph.getShortens(this));
         }
             return pathToRespBank;

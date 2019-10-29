@@ -37,7 +37,7 @@ public class Vehicle implements IDrawAble {
 
     private int moneyAmount=0;
 
-    int reamingDistance;
+    double reamingDistance;
 
     public Vehicle(Point2D position, double speed) {
         Position = position;
@@ -92,11 +92,15 @@ public class Vehicle implements IDrawAble {
                     double sin = Math.sin(Math.toRadians(ang)) ;
                     double cos = Math.cos(Math.toRadians(ang)) ;
 
-                    this.setPosition(new Point2D.Double(
-                            this.getPosition().getX()+getSpeed()*time*cos,
-                            this.getPosition().getY()+getSpeed()*time *sin));
+                    Point2D tmpPoint= new Point2D.Double(
+                            this.getPosition().getX()+getSpeed()*time * cos,
+                            this.getPosition().getY()+getSpeed()*time *sin);
 
-                    reamingDistance-=Math.abs(getSpeed()*time*cos)+Math.abs(getSpeed()*time*sin);
+
+                    reamingDistance-=tmpPoint.distance(this.getPosition());
+
+
+                    this.setPosition(tmpPoint);
 
 
                 }else
@@ -119,12 +123,17 @@ public class Vehicle implements IDrawAble {
                     double sin = Math.sin(Math.toRadians(ang)) ;
                     double cos = Math.cos(Math.toRadians(ang)) ;
 
-                    this.setPosition(new Point2D.Double(
+                    Point2D tmpPoint= new Point2D.Double(
                             this.getPosition().getX()+getSpeed()*time * cos,
-                            this.getPosition().getY()+getSpeed()*time *sin));
+                            this.getPosition().getY()+getSpeed()*time *sin);
 
-                    reamingDistance-=Math.abs(getSpeed()*time*cos)+Math.abs(getSpeed()*time*sin);
 
+
+
+                    reamingDistance-=tmpPoint.distance(this.getPosition());
+
+
+                    this.setPosition(tmpPoint);
 
 
                 }
@@ -217,11 +226,11 @@ public class Vehicle implements IDrawAble {
         this.currentRoad = currentRoad;
     }
 
-    public int getReamingDistance() {
+    public double getReamingDistance() {
         return reamingDistance;
     }
 
-    public void setReamingDistance(int reamingDistance) {
+    public void setReamingDistance(double reamingDistance) {
         this.reamingDistance = reamingDistance;
     }
 

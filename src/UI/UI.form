@@ -113,6 +113,8 @@
                         </constraints>
                         <properties>
                           <maximum value="10"/>
+                          <minimum value="1"/>
+                          <value value="1"/>
                         </properties>
                       </component>
                       <component id="ac5b8" class="javax.swing.JLabel">

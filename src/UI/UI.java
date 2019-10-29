@@ -28,7 +28,7 @@ import java.io.PrintStream;
  */
 public class UI implements ActionListener  {
 
-    double simSpeed=0.1;
+    double simSpeed=0.01;
     private JPanel MainJpanel;
     private JPanel LeftPanel;
     private JTextPane textPaneMessage;
@@ -56,10 +56,11 @@ public class UI implements ActionListener  {
             @Override
             public void stateChanged(ChangeEvent e) {
 
-                simSpeed = ((double) slider1.getValue()/10);
+                simSpeed = ((double) slider1.getValue()/100d);
 
             }
         });
+
         slider2.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -80,6 +81,7 @@ public class UI implements ActionListener  {
 
             }
         });
+
         drawRoadsRadioButton.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent itemEvent) {
@@ -90,9 +92,11 @@ public class UI implements ActionListener  {
 
             }
         });
+
         tree1.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
+if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
                 if (treeSelectionEvent.getOldLeadSelectionPath().getLastPathComponent()instanceof GenericBank)
                  ((GenericBank)treeSelectionEvent.getOldLeadSelectionPath().getLastPathComponent()).setSelected(false);
 
@@ -120,16 +124,6 @@ public class UI implements ActionListener  {
         simulation=new Simulation(a);
 
         a.populateGraph();
-
-
-    /*    LeftPanel.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                super.mouseMoved(e);
-                if (a.getMousePosition() != null)
-                    a.collisionDetection(e.getPoint());
-            }
-        });*/
 
 
 

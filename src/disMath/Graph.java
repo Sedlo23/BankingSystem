@@ -8,6 +8,8 @@ import java.util.PriorityQueue;
 
 public class Graph{
 
+    private int QuickFindDelay=10;
+
     public List<Node> getNodes() {
         return nodes;
     }
@@ -57,6 +59,57 @@ public class Graph{
 
     }
 
+    public void computePathsQuick(Node source,Node Destination) {
+
+        boolean nodeFound=false;
+
+        int delay=0;
+
+        for (Node node:nodes)
+        {
+            node.clearPath();
+
+        }
+
+        source.setMinDistance(0);
+
+        PriorityQueue<Node> vertexQueue = new PriorityQueue<>();
+
+        vertexQueue.add(source);
+
+        while (!vertexQueue.isEmpty()) {
+            Node u = vertexQueue.poll();
+
+            for (Edge e : u.getConnections())
+            {
+
+                Node v = e.getEnd();
+                double weight = e.getWeight();
+                double distanceThroughU = u.getMinDistance() + weight;
+                if (distanceThroughU < v.getMinDistance()) {
+                    vertexQueue.remove(v);
+                    v.setMinDistance( distanceThroughU) ;
+                    v.setPrev(u);
+                    vertexQueue.add(v);
+
+                    if (vertexQueue.peek().equals(Destination))
+                        nodeFound=true;
+
+                }
+            }
+            if (nodeFound) {
+                if (delay == QuickFindDelay)
+                {
+                    return;
+                }
+                else
+                    delay++;
+
+            }
+        }
+
+    }
+
     public LinkedList<Edge> getShortens(Node source)
     {
          LinkedList<Edge> edges=new LinkedList<>();
@@ -75,4 +128,11 @@ public class Graph{
     }
 
 
+    public int getQuickFindDelay() {
+        return QuickFindDelay;
+    }
+
+    public void setQuickFindDelay(int quickFindDelay) {
+        QuickFindDelay = quickFindDelay;
+    }
 }

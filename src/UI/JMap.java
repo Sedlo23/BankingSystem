@@ -82,7 +82,7 @@ public class JMap extends JPanel implements TreeModel {
 
 
        CentralBank centralBank= new CentralBank(
-                new Point2D.Double(256+Math.random()*10,256+Math.random()*10)
+                new Point2D.Double(256+15,256+15)
                 ,Color.MAGENTA
                 ,arr.get(ran.nextInt(arr.size()))
                 ,25
@@ -116,20 +116,25 @@ public class JMap extends JPanel implements TreeModel {
 
               Bank.setParentGraph(getGraph());
 
+
+
            }
+
+
 
 
        for (GenericBank node1:centralBank.getDependingBanks())
        {
            for (int x=0;x<10;x++)
                node1.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5,Color.MAGENTA));
-           for (int x=0;x<50;x++)   {
 
 
+           for (int y=0;y<7;y++)
+           for (int x=0;x<7;x++)   {
 
-           LocalBank Bank = new LocalBank(new Point2D.Double(node1.getPosition().getX()+random.nextInt(80)-20,node1.getPosition().getY()+random.nextInt(80)-20)
+           LocalBank Bank = new LocalBank(new Point2D.Double(node1.getPosition().getX()+(x-4)*8+ran.nextInt(10)-5,node1.getPosition().getY()+(y-4)*8+ran.nextInt(10)-5)
                    ,Color.RED,
-                   arr.get(ran.nextInt(arr.size())),2000,getGraph(),1000,10);
+                   arr.get(ran.nextInt(arr.size())),2000,getGraph(),1000,7);
 
            Bank.setResponsibleBank(node1);
 
@@ -144,8 +149,9 @@ public class JMap extends JPanel implements TreeModel {
         for (Node node1:this.graph.getNodes())
             for (Node node2:this.graph.getNodes())
             {
+
                   if(!node1.equals(node2))
-                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<50)
+                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<20)
                         node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
             }
         //==================================================================

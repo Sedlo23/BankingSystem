@@ -68,7 +68,7 @@ public class JGraph extends JPanel implements ActionListener {
     /**
      *
      */
-    private double maxY = 100;
+    private double maxY = 1;
 
     /**
      *
@@ -78,7 +78,7 @@ public class JGraph extends JPanel implements ActionListener {
     /**
      *
      */
-    private double maxX = 100;
+    private double maxX = 1;
 
     /**
      *
@@ -88,7 +88,7 @@ public class JGraph extends JPanel implements ActionListener {
     /**
      *
      */
-    private boolean movingAvg =true;
+    private boolean movingAvg =false;
 
 
     /**
@@ -249,6 +249,8 @@ public class JGraph extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
 
 
+
+
         super.paintComponent(g);
 
 
@@ -276,7 +278,9 @@ public class JGraph extends JPanel implements ActionListener {
 
         for(int i=0;i<=tickX;i++)
         {
-            g2.drawString(Double.toString((int)(maxX/tickX)*i), ((this.getWidth()-100)/tickX)*i+50, -10);
+
+            double value= ((double)maxX/(double)tickX)*i;
+            g2.drawString( Double.toString(Math.round(value*100d)/100d),((this.getWidth()-100)/tickX)*i+50, -10);
 
         }
 
@@ -289,15 +293,20 @@ public class JGraph extends JPanel implements ActionListener {
 
 
 
-
-        g2.scale(((getWidth()-100)/(maxX)),((getHeight()-100)/((maxY))));
+        double scX=((getWidth()-100)/(maxX));
+        double scY=((getHeight()-100)/((maxY)));
 
 
 
         g2.setColor(Color.BLACK);
 
+        ArrayList<Double> values= new ArrayList<>();
 
-        for (int i = 1; i < getData().size(); i++) {
+        int lastX=0;
+
+        ArrayList<Point2D> point2DS=new ArrayList<>();
+
+        for (int i = 0; i < getData().size(); i++) {
 
 
             if (movingAvg) {
@@ -312,26 +321,57 @@ public class JGraph extends JPanel implements ActionListener {
                     for (int z = 0; z < movingAvgNum; z++)
                         avg2[z] = getData().get(i - z - 1).getY();
 
-                    Point2D tmp1 = new Point2D.Double(getData().get(i - 1).getX(), Avg(avg2));
-                    Point2D tmp = new Point2D.Double(getData().get(i).getX(), Avg(avg));
-
+                    Point2D tmp1 = new Point2D.Double(getData().get(i - 1).getX()*scX, Avg(avg2)*scY);
+                    Point2D tmp = new Point2D.Double(getData().get(i).getX()*scX, Avg(avg)*scY);
                     g2.draw(new Line2D.Double(tmp1, tmp));
 
-                    maxY = Math.max(getData().get(i).getY(), maxY);
+                    maxY = Math.max(getData().get(i).getY()/scY, maxY);
 
-                    maxX = getData().get(i).getX();
+                    maxX = getData().get(i).getX()/scX;
+
+
+
+
+
+
                 }
 
             } else {
+
+
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                Point2D tmp1 = new Point2D.Double(getData().get(i - 1).getX(), getData().get(i - 1).getY());
-                Point2D tmp = new Point2D.Double(getData().get(i).getX(), getData().get(i).getY());
-                g2.draw(new Line2D.Double(tmp1, tmp));
 
-                maxY = Math.max(tmp.getY(), maxY);
+                Point2D tmp = new Point2D.Double(getData().get(i).getX()*scX, getData().get(i).getY()*scY);
 
-                maxX = Math.max(tmp.getX(), maxX);
+                if (lastX<(int)(getData().get(i).getX()*scX)-1)
+               {
+
+                   if (values.size()>0)  {
+                       double total = 0;
+
+                   for(int o=0; o<values.size(); o++){
+                       total = total + values.get(o);
+                   }
+
+                       double average = total / values.size();
+                       point2DS.add(new Point2D.Double(lastX, average));
+                   }
+
+                   point2DS.add(tmp);
+                   lastX=(int)(getData().get(i).getX()*scX);
+                   values=new ArrayList<>();
+               }else
+                   values.add(getData().get(i).getY()*scY);
+
+
+                maxY = Math.max(tmp.getY()/scY, maxY);
+
+                maxX = Math.max(tmp.getX()/scX, maxX);
+
+
+
+
 
             }
 
@@ -343,7 +383,7 @@ public class JGraph extends JPanel implements ActionListener {
 
         for(int i=0;i<=tickX;i++)
         {
-            g2.draw(new Line2D.Double(i*(maxX/tickX),0,i*(maxX/tickX),maxY));
+            g2.draw(new Line2D.Double(i*(maxX/tickX)*scX,0,i*(maxX/tickX)*scX,maxY*scY));
 
 
 
@@ -353,13 +393,17 @@ public class JGraph extends JPanel implements ActionListener {
         {
 
 
-            g2.draw(new Line2D.Double(0,i*((maxY)/tickY),maxX,i*((maxY)/tickY)));
+            g2.draw(new Line2D.Double(0,i*((maxY)/tickY)*scY,maxX*scX,i*((maxY)/tickY)*scY));
 
         }
 
 
+        for (int x= 0;x<point2DS.size()-1;x++)
+        {
 
+            g2.drawLine((int)point2DS.get(x).getX(),(int)point2DS.get(x).getY(),(int)point2DS.get(x+1).getX(),(int)point2DS.get(x+1).getY());
 
+        }
 
 
 
