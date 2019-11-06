@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 
-public class Graph{
+public class Graph {
 
     private int QuickFindDelay=10;
 
@@ -127,7 +127,6 @@ public class Graph{
 
     }
 
-
     public int getQuickFindDelay() {
         return QuickFindDelay;
     }
@@ -135,4 +134,6 @@ public class Graph{
     public void setQuickFindDelay(int quickFindDelay) {
         QuickFindDelay = quickFindDelay;
     }
+
+
 }

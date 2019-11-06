@@ -5,6 +5,8 @@ import Building.Vehicles.Vehicle;
 import UI.JMap;
 import disMath.Node;
 
+import java.util.ArrayList;
+
 
 /**
  * Simulation
@@ -61,8 +63,8 @@ public class Simulation {
 
     }
 
-        if ((int)time%24==0)
-            map.getRootBank().setMoneyAmount(750000);
+        if ((int)getTimePassed()%24==0)
+          map.getRootBank().setMoneyAmount(7500000);
 
 
     }
@@ -88,5 +90,15 @@ public class Simulation {
 
     public void setMap(JMap map) {
         this.map = map;
+    }
+
+    public ArrayList<Vehicle> getVehicles()
+    {
+       ArrayList<Vehicle>tmp = new ArrayList<Vehicle>() ;
+
+       for (Node node:map.getGraph().getNodes())
+           tmp.addAll(((GenericBank)node).getVehicleList());
+
+        return tmp;
     }
 }

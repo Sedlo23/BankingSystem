@@ -2,10 +2,14 @@ package Building.Vehicles;
 
 import Building.GenericBank;
 import Building.IDrawAble;
+import Building.Road;
+import DataStructure.Order;
 import disMath.Edge;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -17,6 +21,14 @@ import java.util.LinkedList;
  */
 public class Vehicle implements IDrawAble {
 
+    private boolean selected= false;
+
+    private double wait=0;
+
+    private double unLoadTime=0.10;
+
+    private double depoTime=0.30;
+
     private Point2D Position;
 
     private double speed;
@@ -26,6 +38,8 @@ public class Vehicle implements IDrawAble {
     private Color color = Color.BLUE;
 
     private LinkedList<Edge> path=new LinkedList<>();
+
+    private ArrayList<Order> orders=new ArrayList<>();
 
     private Edge currentRoad;
 
@@ -71,7 +85,7 @@ public class Vehicle implements IDrawAble {
     {
 
 
-
+if (getWait()<=0) {
             if(currentRoad!=null&&onRoad)   {
                 if(!backing) {
                     if (reamingDistance<0)
@@ -79,10 +93,24 @@ public class Vehicle implements IDrawAble {
                         if((iterator==0))
                         {
                             ((GenericBank)currentRoad.getStart()).vehicleArrive(this);
+
+                            this.setPath(((GenericBank)path.getLast().getEnd()).getPathToBank((GenericBank)currentRoad.getStart()));
+
+
+
                             backing=true;
+
                             return;
                         }
                         else {
+
+                            for (Order order:orders)
+                            {
+                                if(order.getSender().equals(currentRoad.getStart()))
+                                 ((GenericBank)currentRoad.getStart()).vehicleArrive(this,order.getMoneyAmount());
+
+                            }
+
                             iterator--;
                             setCurrentRoad(path.get(iterator));
                         }
@@ -103,30 +131,33 @@ public class Vehicle implements IDrawAble {
                     this.setPosition(tmpPoint);
 
 
-                }else
+                }
+                else
                 {
                     if (reamingDistance<0)
                     {
-                        if((iterator==path.size()))
+                        if((iterator==0))
                         {
                             onRoad=false;
+                            setWait(depoTime);
                             return;
                         }
                         else {
+
+                            iterator--;
                             setCurrentRoad(path.get(iterator));
-                            iterator++;
 
                         }
                     }
 
-                    double ang = getAngle(((GenericBank)currentRoad.getEnd()).getPosition(), ((GenericBank)currentRoad.getStart()).getPosition());
+                    double ang = getAngle(((GenericBank)currentRoad.getStart()).getPosition(), ((GenericBank)currentRoad.getEnd()).getPosition());
+
                     double sin = Math.sin(Math.toRadians(ang)) ;
                     double cos = Math.cos(Math.toRadians(ang)) ;
 
                     Point2D tmpPoint= new Point2D.Double(
-                            this.getPosition().getX()+getSpeed()*time * cos,
+                            this.getPosition().getX()+getSpeed()*time *cos,
                             this.getPosition().getY()+getSpeed()*time *sin);
-
 
 
 
@@ -138,7 +169,7 @@ public class Vehicle implements IDrawAble {
 
                 }
             }
-
+}else setWait(wait-time);
 
 
     }
@@ -167,6 +198,29 @@ public class Vehicle implements IDrawAble {
         graphics2D.setColor(this.getColor());
 
         graphics2D.fillOval((int)(this.getPosition().getX()-(size/2)),(int)(this.getPosition().getY()-(size/2)),(int)((size)),(int)((size)));
+
+        if (selected)
+        {
+            String str = this.toString();
+            Color textColor = Color.WHITE;
+            Color bgColor = Color.BLACK;
+            int x = (int)this.getPosition().getX();
+            int y = (int)this.getPosition().getY();
+
+            FontMetrics fm = graphics2D.getFontMetrics();
+            Rectangle2D rect = fm.getStringBounds(str, graphics2D);
+
+            graphics2D.setColor(bgColor);
+            graphics2D.fillRect(x,
+                    y - fm.getAscent(),
+                    (int) rect.getWidth(),
+                    (int) rect.getHeight());
+
+            graphics2D.setColor(textColor);
+            graphics2D.drawString(str, x, y);
+
+
+        }
 }
     }
 
@@ -204,10 +258,17 @@ public class Vehicle implements IDrawAble {
         backing=false;
         iterator=path.size()-1;
 
-        if(path.size()>0) {
+        if(path.size()>0)
+        {
            setPosition(((GenericBank) path.getLast().getEnd()).getPosition());
            setCurrentRoad(path.getLast());
-       }
+        }
+
+
+        for (Edge edge:path)
+            ((Road)edge).setVisible(true);
+
+
 
         this.path = path;
     }
@@ -217,16 +278,16 @@ public class Vehicle implements IDrawAble {
     }
 
     public void setCurrentRoad(Edge currentRoad) {
-        if (!backing)
-             setPosition((((GenericBank)currentRoad.getEnd())).getPosition());
-        else
-            setPosition((((GenericBank)currentRoad.getStart())).getPosition());
+
+        setPosition((((GenericBank)currentRoad.getEnd())).getPosition());
+
 
         setReamingDistance(currentRoad.getWeight());
         this.currentRoad = currentRoad;
     }
 
-    public double getReamingDistance() {
+    public double getReamingDistance()
+    {
         return reamingDistance;
     }
 
@@ -238,6 +299,15 @@ public class Vehicle implements IDrawAble {
     {
         int tmp =moneyAmount;
         moneyAmount=0;
+        setWait(unLoadTime);
+        return tmp;
+    }
+
+    public int unloadMoney(int Amount)
+    {
+        int tmp =Amount;
+        moneyAmount-=Amount;
+        setWait(unLoadTime);
         return tmp;
     }
 
@@ -251,5 +321,39 @@ public class Vehicle implements IDrawAble {
 
     public void setMoneyAmount(int moneyAmount) {
         this.moneyAmount = moneyAmount;
+    }
+
+    public double getWait() {
+        return wait;
+    }
+
+    public void setWait(double wait) {
+        if (wait>0)
+        this.wait = wait;
+        else this.wait=0;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Vehicle" +
+                "moneyAmount=" + moneyAmount +
+                '}';
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public ArrayList<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(ArrayList<Order> orders) {
+        this.orders = orders;
     }
 }

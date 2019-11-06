@@ -16,6 +16,7 @@ public class Road extends Edge implements IDrawAble {
 
     private Color color;
 
+    private Boolean visible=false;
 
     private int stroke=3;
 
@@ -43,13 +44,16 @@ public class Road extends Edge implements IDrawAble {
     @Override
     public void draw(Graphics2D graphics2D) {
 
-        graphics2D.setColor(this.getColor());
+        if (visible)
+        {
 
-        graphics2D.setStroke(new BasicStroke(getStroke()));
+            graphics2D.setColor(this.getColor());
 
-       graphics2D.draw(this.getHitBox());
+            graphics2D.setStroke(new BasicStroke(getStroke()));
 
+            graphics2D.draw(this.getHitBox());
 
+        }
     }
 
     @Override
@@ -86,5 +90,12 @@ public class Road extends Edge implements IDrawAble {
         setStroke(3);
     }
 
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
+    }
 }
 

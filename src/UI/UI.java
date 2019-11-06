@@ -1,22 +1,18 @@
 package UI;
 
 import Building.GenericBank;
+import Building.Vehicles.Vehicle;
 import DataStructure.JGraph;
 import Simulation.Simulation;
 import disMath.Node;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import java.awt.*;
+import javax.swing.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 
 /**
@@ -32,23 +28,29 @@ public class UI implements ActionListener  {
     private JPanel MainJpanel;
     private JPanel LeftPanel;
     private JTextPane textPaneMessage;
-    private JButton button1;
     private JTree tree1;
-    private JTabbedPane tabbedPane1;
+    private JTabbedPane tabbedPane1;;
     private JPanel JGraphPanel;
-    private JTabbedPane tabbedPane2;
     private JPanel JGraphCars;
     private JSlider slider1;
     private JRadioButton drawRoadsRadioButton;
     private JRadioButton drawMapRadioButton;
     private JLabel TimeLabel;
     private JSlider slider2;
+    private JPanel JGraphRootBankMoney;
+    private JPanel JGraphWait;
+    private JList CarsList;
+    private JTextPane MessegeArea;
     private Simulation simulation;
+
     private Timer tm =new Timer(10,this);
     JGraph jGraph;
     JGraph jGraphCars;
+    JGraph jGraphRootBank;
+    JGraph jGraphWait;
 
-    public UI() {
+    public UI()
+    {
 
         tm.start();
 
@@ -103,9 +105,27 @@ if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
                 ((GenericBank)tree1.getLastSelectedPathComponent()).setSelected(true);
             }
         });
+        CarsList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent listSelectionEvent) {
+                for (int i = 0; i < CarsList.getModel().getSize(); i++) {
+                   ((Vehicle)CarsList.getModel().getElementAt(i)).setSelected(false);
+                }
+
+                MessegeArea.setText("");
+
+                for (Object vehicle:CarsList.getSelectedValuesList()) {
+                    ((Vehicle) vehicle).setSelected(true);
+                    MessegeArea.setText(MessegeArea.getText()+"\n"+vehicle.toString());
+                }
+
+
+            }
+        });
     }
 
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.opengl", "true");
         JFrame frame = new JFrame("UI");
         frame.setContentPane(new UI().MainJpanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -129,7 +149,7 @@ if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
 
         textPaneMessage =new JTextPane();
 
-        MessageBoard out = new MessageBoard(textPaneMessage);
+        LogMessenger out = new LogMessenger(textPaneMessage);
         System.setOut (new PrintStream(out));
 
 
@@ -150,48 +170,50 @@ if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
 
         JGraphCars=jGraphCars;
 
+        jGraphRootBank = new JGraph("[Time]", "[Money Amount]");
+
+        JGraphRootBankMoney=jGraphRootBank;
+
+        jGraphWait= new JGraph("[Time]", "[Wait time]");
+
+        JGraphWait=jGraphWait;
+
+
+
+      CarsList = new JList(simulation.getVehicles().toArray());
+
+
 
 
     }
-
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
+
         simulation.nextStep(simSpeed);
 
         jGraph.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().outOfMoneyBanks()));
-            jGraphCars.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().onRoadCars()));
+        jGraphCars.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().onRoadCars()));
+        jGraphRootBank.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().getRootBank().getMoneyAmount()));
 
+        double av=0;
+
+        for (Node bank:simulation.getMap().getGraph().getNodes())
+           av+=((GenericBank)bank).getWithoutMoneyTime();
+
+        av=((av)/(double)simulation.getMap().getGraph().getNodes().size());
+
+        jGraphWait.getData().add(new Point2D.Double(simulation.getTimePassed(),av));
 
         TimeLabel.setText("TimePassed: [" +simulation.getDate()+"]");
+
+        jGraphWait.repaint();
+        jGraph.repaint();
+        jGraphRootBank.repaint();
+        jGraphCars.repaint();
+        CarsList.updateUI();
+        tree1.updateUI();
+
     }
 
-    private BufferedImage toCompatibleImage(BufferedImage image)
-    {
-        // obtain the current system graphical settings
-        GraphicsConfiguration gfxConfig = GraphicsEnvironment.
-                getLocalGraphicsEnvironment().getDefaultScreenDevice().
-                getDefaultConfiguration();
-
-        /*
-         * if image is already compatible and optimized for current system
-         * settings, simply return it
-         */
-        if (image.getColorModel().equals(gfxConfig.getColorModel()))
-            return image;
-
-        // image is not optimized, so create a new image that is
-        BufferedImage newImage = gfxConfig.createCompatibleImage(
-                image.getWidth(), image.getHeight(), image.getTransparency());
-
-        // get the graphics context of the new image to draw the old image on
-        Graphics2D g2d = newImage.createGraphics();
-
-        // actually draw the image and dispose of context no longer needed
-        g2d.drawImage(image, 0, 0, null);
-        g2d.dispose();
-
-        // return the new optimized image
-        return newImage;
-    }
 }

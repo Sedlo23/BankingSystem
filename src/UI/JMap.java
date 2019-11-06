@@ -16,6 +16,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.Random;
  */
 public class JMap extends JPanel implements TreeModel {
 
+
     private boolean drawRoad=false;
 
     private boolean visibility=true;
@@ -39,8 +41,6 @@ public class JMap extends JPanel implements TreeModel {
     private double scale=1;
 
     private GenericBank rootBank;
-
-    private Random random=new Random();
 
 
     public JMap()
@@ -61,10 +61,16 @@ public class JMap extends JPanel implements TreeModel {
 
     }
 
+    @Deprecated
     @SuppressWarnings("Magic numbers, name genarator etc ... just for the sake of being here")
     public void populateGraph()  {
 
         ArrayList<String> arr = new ArrayList<String>();
+
+        arr.add("nojono");
+
+        File f = new File("out/production/BankingSystem/Data/names.txt");
+        if(f.exists() && !f.isDirectory())
         try (BufferedReader br = new BufferedReader(new FileReader("out/production/BankingSystem/Data/names.txt")))
         {
 
@@ -82,15 +88,16 @@ public class JMap extends JPanel implements TreeModel {
 
 
        CentralBank centralBank= new CentralBank(
-                new Point2D.Double(256+15,256+15)
+                new Point2D.Double(256,256)
                 ,Color.MAGENTA
                 ,arr.get(ran.nextInt(arr.size()))
                 ,25
         );
 
 
-        for (int x=0;x<100;x++)
-            centralBank.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5));
+
+        for (int x=0;x<50;x++)
+            centralBank.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5,Color.BLUE.darker()));
 
        setRootBank(centralBank);
 
@@ -112,6 +119,7 @@ public class JMap extends JPanel implements TreeModel {
 
               Bank.setResponsibleBank(centralBank);
 
+
               getGraph().addNode(Bank);
 
               Bank.setParentGraph(getGraph());
@@ -125,8 +133,8 @@ public class JMap extends JPanel implements TreeModel {
 
        for (GenericBank node1:centralBank.getDependingBanks())
        {
-           for (int x=0;x<10;x++)
-               node1.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5,Color.MAGENTA));
+           for (int x=0;x<5;x++)
+               node1.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5,Color.ORANGE));
 
 
            for (int y=0;y<7;y++)
@@ -138,6 +146,7 @@ public class JMap extends JPanel implements TreeModel {
 
            Bank.setResponsibleBank(node1);
 
+
            getGraph().addNode(Bank);
 
            Bank.setParentGraph(getGraph());
@@ -147,20 +156,31 @@ public class JMap extends JPanel implements TreeModel {
 
         //==================================================================
         for (Node node1:this.graph.getNodes())
+        {
+
+            int i=5;
+            while (node1.getConnections().size()<14)  {
+
+
             for (Node node2:this.graph.getNodes())
             {
 
-                  if(!node1.equals(node2))
-                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<20)
+                  if(!node1.equals(node2)&&!node1.getConnections().contains(node2))
+                    if (((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition())<i)
+                    {
                         node1.getConnections().add(new Road(((GenericBank)node1),((GenericBank)node2),(int)((GenericBank)node1).getPosition().distance(((GenericBank)node2).getPosition()),Color.BLACK));
+                        node2.getConnections().add(new Road(((GenericBank)node2),((GenericBank)node1),(int)((GenericBank)node2).getPosition().distance(((GenericBank)node1).getPosition()),Color.BLACK));
+
             }
+            }
+            i+=5;
+            }
+        }
         //==================================================================
 
 
 
     }
-
-
 
     public void highLightRoad(Node source,Node destination) {
 
@@ -190,8 +210,6 @@ public class JMap extends JPanel implements TreeModel {
     }
 
 
-
-
     @Override
     public void paint(Graphics g) {
 
@@ -202,7 +220,6 @@ public class JMap extends JPanel implements TreeModel {
         Graphics2D graphics2D=(Graphics2D)g;
 
         computeModelDimensions(graphics2D);
-
 
 
         for (Node node:graph.getNodes())
@@ -228,6 +245,8 @@ public class JMap extends JPanel implements TreeModel {
         }
 
         }
+
+
 
 
     }
@@ -270,7 +289,6 @@ public class JMap extends JPanel implements TreeModel {
         }
 
     }
-
 
     public  void computeModelDimensions(Graphics2D g) {
 
@@ -320,7 +338,6 @@ public class JMap extends JPanel implements TreeModel {
 
 
     }
-
 
     public GenericBank getRootBank() {
         return rootBank;
