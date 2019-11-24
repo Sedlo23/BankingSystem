@@ -2,6 +2,7 @@ package Building;
 
 import Building.Vehicles.Vehicle;
 import DataStructure.Order;
+import DataStructure.Path;
 import disMath.Edge;
 import disMath.Graph;
 import disMath.Node;
@@ -11,10 +12,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Building
@@ -25,13 +23,13 @@ import java.util.Random;
  */
 public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
 
-    private ArrayList<LinkedList<Edge>> pathList=new ArrayList<>();
+    private ArrayList<Path> pathList=new ArrayList<>();
 
     private double withoutMoneyTime = 0;
 
     private boolean moneyOnTheWay = false;
 
-    private boolean QuickPathFinding = true;
+    private boolean QuickPathFinding = false;
 
     private Point2D position;
 
@@ -49,11 +47,11 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
 
     private ArrayList<Vehicle> vehicleList = new ArrayList<>();
 
-    private LinkedList<Edge> pathToRespBank;
+    private Path pathToRespBank;
 
     private Graph parentGraph;
 
-    private int MoneySpending = 1000;
+    private int MoneySpending = 100;
 
     private LinkedList<Order> orderQueue = new LinkedList<>();
 
@@ -162,9 +160,10 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
 
             if (minMoneyAmount > moneyAmount)
                 if (!moneyOnTheWay) {
-                    responsibleBank.getOrderQueue().add(new Order(minMoneyAmount * 2, this));
+
+                 if (responsibleBank!=null){  responsibleBank.getOrderQueue().add(new Order(minMoneyAmount * 2, this));
                     moneyOnTheWay = true;
-                }
+                }}
 
 
             if (moneyOnTheWay)
@@ -177,7 +176,19 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
                     if (!orderQueue.isEmpty())
                     {
 
-                        if (orderQueue.size()>2)
+                        orderQueue.sort(new Comparator<Order>() {
+                            @Override
+                            public int compare(Order order, Order t1) {
+                                if (order.getSender().getWithoutMoneyTime()<t1.getSender().getWithoutMoneyTime())
+                                    return 1;
+                                if (order.getSender().getWithoutMoneyTime()>t1.getSender().getWithoutMoneyTime())
+                                    return -1;
+
+                                return 0;
+                            }
+                        });
+
+                        if (orderQueue.size()>2&&(orderQueue.getFirst().getSender().getPathToBank(orderQueue.get(1).getSender())).getWeight()<orderQueue.get(1).getSender().getPathToRespBank().getWeight())
                         {
                                 if (orderQueue.getFirst().getMoneyAmount()+orderQueue.get(1).getMoneyAmount() < moneyAmount)
                                  {
@@ -222,7 +233,6 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
             }
         }
 
-
     @Override
     public String toString() {
         return "{" +
@@ -231,14 +241,15 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
                 '}';
     }
 
-    public LinkedList<Edge> getPathToRespBank() {
+    public Path getPathToRespBank() {
 
-       for(LinkedList<Edge> list:pathList)
-       {
-           if (list.getLast().getEnd().equals(responsibleBank))
-               return  list;
+        for (Iterator<Path> i = pathList.iterator(); i.hasNext();) {
+            Path item = i.next();
+            if (!item.isEmpty()&&item.getLast().getEnd()!=null)
+                if (item.getLast().getEnd().equals(responsibleBank))
+                    return item;
+        }
 
-       }
 
         if (pathToRespBank == null) {
 
@@ -249,6 +260,7 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
 
             setPathToRespBank(parentGraph.getShortens(this));
 
+
             System.out.println("(New_Road) " + this + " to " + responsibleBank);
         }
 
@@ -258,14 +270,19 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
 
     }
 
-    public LinkedList<Edge> getPathToBank(GenericBank genericBank) {
+    public Path getPathToBank(GenericBank genericBank) {
 
 
-        for(LinkedList<Edge> list:pathList)
-        {
-            if (list.getLast().getEnd().equals(genericBank))
-                return  list;
+
+
+        for (Iterator<Path> i = pathList.iterator(); i.hasNext();) {
+            Path item = i.next();
+            if (!item.isEmpty()&&item.getLast().getEnd()!=null)
+            if (item.getLast().getEnd().equals(genericBank))
+                return item;
         }
+
+
 
 
             if (QuickPathFinding)
@@ -275,15 +292,16 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
 
         System.out.println("(New_Road)" + this+ " to " + genericBank);
 
-        LinkedList<Edge> tmp=parentGraph.getShortens(this);
+       Path tmp=parentGraph.getShortens(this);
 
         pathList.add(tmp);
+
 
         return tmp;
 
     }
 
-    public void setPathToRespBank(LinkedList<Edge> pathToRespBank) {
+    public void setPathToRespBank(Path pathToRespBank) {
 
         this.pathToRespBank = pathToRespBank;
     }
@@ -417,6 +435,8 @@ public abstract class GenericBank extends Node implements IDrawAble, TreeModel {
     public int hashCode() {
         return Objects.hash(getPosition(), getName());
     }
+
+
 
 
 }

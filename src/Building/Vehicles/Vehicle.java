@@ -21,7 +21,7 @@ import java.util.LinkedList;
  */
 public class Vehicle implements IDrawAble {
 
-    private boolean selected= false;
+    private boolean selected=false;
 
     private double wait=0;
 
@@ -85,7 +85,7 @@ public class Vehicle implements IDrawAble {
     {
 
 
-if (getWait()<=0) {
+        if (getWait()<=0) {
             if(currentRoad!=null&&onRoad)   {
                 if(!backing) {
                     if (reamingDistance<0)
@@ -112,6 +112,9 @@ if (getWait()<=0) {
                             }
 
                             iterator--;
+                            if (iterator<0)
+                                return;
+
                             setCurrentRoad(path.get(iterator));
                         }
                     }
@@ -145,6 +148,8 @@ if (getWait()<=0) {
                         else {
 
                             iterator--;
+                            if (iterator<0)
+                                return;
                             setCurrentRoad(path.get(iterator));
 
                         }
@@ -169,7 +174,7 @@ if (getWait()<=0) {
 
                 }
             }
-}else setWait(wait-time);
+        }else setWait(wait-time);
 
 
     }

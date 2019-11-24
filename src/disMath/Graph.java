@@ -1,7 +1,8 @@
 package disMath;
 
+import DataStructure.Path;
+
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -110,9 +111,9 @@ public class Graph {
 
     }
 
-    public LinkedList<Edge> getShortens(Node source)
+    public Path getShortens(Node source)
     {
-         LinkedList<Edge> edges=new LinkedList<>();
+         Path edges=new Path();
 
          Node iterator=source;
 

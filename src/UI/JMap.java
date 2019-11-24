@@ -88,7 +88,7 @@ public class JMap extends JPanel implements TreeModel {
 
 
        CentralBank centralBank= new CentralBank(
-                new Point2D.Double(256,256)
+                new Point2D.Double(3*128*1.5,3*128*1.5)
                 ,Color.MAGENTA
                 ,arr.get(ran.nextInt(arr.size()))
                 ,25
@@ -96,8 +96,8 @@ public class JMap extends JPanel implements TreeModel {
 
 
 
-        for (int x=0;x<50;x++)
-            centralBank.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5,Color.BLUE.darker()));
+        for (int x=0;x<30;x++)
+            centralBank.getVehicleList().add(new Vehicle(new Point2D.Double(),90,5,Color.BLUE.darker()));
 
        setRootBank(centralBank);
 
@@ -105,53 +105,73 @@ public class JMap extends JPanel implements TreeModel {
 
        centralBank.setParentGraph(getGraph());
 
-       for (int x=0;x<10;x++)
-           for (int y=0;y<10;y++)
+       for (int x=1;x<6;x++)
+           for (int y=1;y<6;y++)
            {
-               if (y==4&&x==4)
+               if (y==3&&x==3)
                    continue;
 
-               LocalBank Bank = new LocalBank(new Point2D.Double(64*x,64*y),Color.RED,arr.get(ran.nextInt(arr.size()))
-                       ,15
+               LocalBank Bank = new LocalBank(new Point2D.Double(128*x*1.5,128*y*1.5),Color.RED,arr.get(ran.nextInt(arr.size()))
+                       ,250000
                        ,getGraph()
-                       ,30000
+                       ,100000
                        ,20);
 
+              {
               Bank.setResponsibleBank(centralBank);
-
 
               getGraph().addNode(Bank);
 
               Bank.setParentGraph(getGraph());
 
-
-
+               }
            }
-
 
 
 
        for (GenericBank node1:centralBank.getDependingBanks())
        {
-           for (int x=0;x<5;x++)
-               node1.getVehicleList().add(new Vehicle(new Point2D.Double(),100,5,Color.ORANGE));
+           for (int x=0;x<10;x++)
+               node1.getVehicleList().add(new Vehicle(new Point2D.Double(),70,5,Color.ORANGE));
 
 
-           for (int y=0;y<7;y++)
-           for (int x=0;x<7;x++)   {
+           for (int y=0;y<14;y++)
+           for (int x=0;x<14;x++)   {
 
-           LocalBank Bank = new LocalBank(new Point2D.Double(node1.getPosition().getX()+(x-4)*8+ran.nextInt(10)-5,node1.getPosition().getY()+(y-4)*8+ran.nextInt(10)-5)
+           LocalBank Bank = new LocalBank(new Point2D.Double(node1.getPosition().getX()+(x-7)*14+ran.nextInt(4)-2,node1.getPosition().getY()+(y-7)*14+ran.nextInt(4)-2)
                    ,Color.RED,
                    arr.get(ran.nextInt(arr.size())),2000,getGraph(),1000,7);
 
            Bank.setResponsibleBank(node1);
+               if (((GenericBank)node1).getPosition().distance(((GenericBank)Bank).getPosition())>15)
+               {
+                   getGraph().addNode(Bank);
 
-
-           getGraph().addNode(Bank);
-
-           Bank.setParentGraph(getGraph());
+                   Bank.setParentGraph(getGraph());
+               }
            }
        }
+
+
+        {
+
+
+            for (int y=0;y<14;y++)
+                for (int x=0;x<14;x++)   {
+
+                    LocalBank Bank = new LocalBank(new Point2D.Double(centralBank.getPosition().getX()+(x-7)*14,centralBank.getPosition().getY()+(y-7)*14)
+                            ,Color.RED,
+                            arr.get(ran.nextInt(arr.size())),2000,getGraph(),1000,7);
+
+                    Bank.setResponsibleBank(centralBank);
+                    if (((GenericBank)centralBank).getPosition().distance(((GenericBank)Bank).getPosition())>30)
+                    {
+                        getGraph().addNode(Bank);
+
+                        Bank.setParentGraph(getGraph());
+                    }
+                }
+        }
 
 
         //==================================================================
@@ -208,7 +228,6 @@ public class JMap extends JPanel implements TreeModel {
     public void setGraph(Graph graph) {
         this.graph = graph;
     }
-
 
     @Override
     public void paint(Graphics g) {

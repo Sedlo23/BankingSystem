@@ -41,13 +41,18 @@ public class UI implements ActionListener  {
     private JPanel JGraphWait;
     private JList CarsList;
     private JTextPane MessegeArea;
+    private JPanel CalcGraph;
     private Simulation simulation;
+    private LogMessenger messenger;
+
+
 
     private Timer tm =new Timer(10,this);
     JGraph jGraph;
     JGraph jGraphCars;
     JGraph jGraphRootBank;
     JGraph jGraphWait;
+    JGraph jCalc;
 
     public UI()
     {
@@ -105,6 +110,7 @@ if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
                 ((GenericBank)tree1.getLastSelectedPathComponent()).setSelected(true);
             }
         });
+
         CarsList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
@@ -122,15 +128,25 @@ if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
 
             }
         });
+
+
     }
 
-    public static void main(String[] args) {
-        System.setProperty("sun.java2d.opengl", "true");
+
+    public static void main(String[] args)
+    {
+
+        System.setProperty("sun.java2d.opengl", "True");
+        System.setProperty("sun.java2d.xrender","True");
         JFrame frame = new JFrame("UI");
         frame.setContentPane(new UI().MainJpanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                frame.setVisible(true);
+            }
+        });
 
 
     }
@@ -145,22 +161,17 @@ if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
 
         a.populateGraph();
 
-
-
         textPaneMessage =new JTextPane();
 
-        LogMessenger out = new LogMessenger(textPaneMessage);
-        System.setOut (new PrintStream(out));
+        messenger = new LogMessenger(textPaneMessage);
 
+        System.setOut (new PrintStream(messenger));
 
         tree1= new JTree();
 
         tree1.setModel(a);
 
-
-
         a.setDoubleBuffered(true);
-
 
         jGraph = new JGraph("[Time]", "[Out of money facilities]");
 
@@ -178,9 +189,17 @@ if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
 
         JGraphWait=jGraphWait;
 
+        jCalc= new JGraph("[Time]", "[Calculations]");
+
+        CalcGraph=jCalc;
 
 
-      CarsList = new JList(simulation.getVehicles().toArray());
+
+         CarsList = new JList(simulation.getVehicles().toArray());
+
+
+         jCalc.getData().add(new Point2D.Double(0,0));
+
 
 
 
@@ -190,30 +209,38 @@ if (treeSelectionEvent.getOldLeadSelectionPath()!=null)
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
-        simulation.nextStep(simSpeed);
 
-        jGraph.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().outOfMoneyBanks()));
-        jGraphCars.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().onRoadCars()));
-        jGraphRootBank.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().getRootBank().getMoneyAmount()));
+                simulation.nextStep(simSpeed);
 
-        double av=0;
+                jGraph.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().outOfMoneyBanks()));
+                jGraphCars.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().onRoadCars()));
+                jGraphRootBank.getData().add(new Point2D.Double(simulation.getTimePassed(),simulation.getMap().getRootBank().getMoneyAmount()));
 
-        for (Node bank:simulation.getMap().getGraph().getNodes())
-           av+=((GenericBank)bank).getWithoutMoneyTime();
 
-        av=((av)/(double)simulation.getMap().getGraph().getNodes().size());
+                jCalc.getData().add(new Point2D.Double(simulation.getTimePassed(),messenger.getLogNum()));
 
-        jGraphWait.getData().add(new Point2D.Double(simulation.getTimePassed(),av));
+                jCalc.setMovingAvg(true);
 
-        TimeLabel.setText("TimePassed: [" +simulation.getDate()+"]");
+                messenger.setLogNum(0);
+
+                double av=0;
+
+                for (Node bank:simulation.getMap().getGraph().getNodes())
+                    av+=((GenericBank)bank).getWithoutMoneyTime();
+
+                av=((av)/(double)simulation.getMap().getGraph().getNodes().size());
+
+                jGraphWait.getData().add(new Point2D.Double(simulation.getTimePassed(),av));
+
+                TimeLabel.setText("TimePassed: [" +simulation.getDate()+"]");
 
         jGraphWait.repaint();
         jGraph.repaint();
         jGraphRootBank.repaint();
         jGraphCars.repaint();
+        CalcGraph.repaint();
         CarsList.updateUI();
         tree1.updateUI();
-
-    }
+            }
 
 }

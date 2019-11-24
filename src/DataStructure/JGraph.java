@@ -303,7 +303,7 @@ public class JGraph extends JPanel implements MouseListener {
 
     private ArrayList <Point2D> getMovingAvgGraph()
     {
-        double scX=((getWidth()-100)/(maxX));
+        double scX=((getWidth()-200)/(maxX));
         double scY=((getHeight()-100)/((maxY)));
 
         ArrayList<Point2D> point2DS=new ArrayList<>();

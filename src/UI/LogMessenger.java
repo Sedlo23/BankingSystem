@@ -1,8 +1,6 @@
 package UI;
 
 import javax.swing.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -28,7 +26,6 @@ public class LogMessenger extends OutputStream
 
     public LogMessenger(JTextPane destination)
     {
-
         this.destination = destination;
     }
 
@@ -42,7 +39,7 @@ public class LogMessenger extends OutputStream
             @Override
             public void run()
             {
-                if (!text.isBlank())
+         /*       if (!text.isBlank())
                 {
                     destination.setText("["+ objSDF.format(Date.from(Instant.now())) +"."+logNum+"] "+text);
                     BufferedWriter writer = null;
@@ -54,7 +51,7 @@ public class LogMessenger extends OutputStream
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
+                }*/
                 logNum++;
             }
         });
@@ -66,6 +63,12 @@ public class LogMessenger extends OutputStream
         write (new byte [] {(byte)b}, 0, 1);
     }
 
+    public int getLogNum() {
+        return logNum;
+    }
 
+    public void setLogNum(int logNum) {
+        this.logNum = logNum;
+    }
 }
 

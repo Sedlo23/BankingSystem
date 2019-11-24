@@ -15,13 +15,16 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 22.10.19
  */
-public class Simulation {
+public class Simulation implements Runnable {
 
     private double timePassed=0;
 
     private JMap map;
 
-    public Simulation(JMap map) {
+    private double time=0.5;
+
+    public Simulation(JMap map)
+    {
         this.map = map;
     }
 
@@ -63,8 +66,10 @@ public class Simulation {
 
     }
 
-        if ((int)getTimePassed()%24==0)
-          map.getRootBank().setMoneyAmount(7500000);
+        if (map.getRootBank()!=null&&(int) getTimePassed() % 24 == 0) {
+
+            map.getRootBank().setMoneyAmount(7500000);
+        }
 
 
     }
@@ -100,5 +105,10 @@ public class Simulation {
            tmp.addAll(((GenericBank)node).getVehicleList());
 
         return tmp;
+    }
+
+    @Override
+    public void run() {
+                nextStep(time);
     }
 }
